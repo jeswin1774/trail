@@ -12,8 +12,9 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
+  import { getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
@@ -27,11 +28,12 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
   // expose globally
-  window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp };
+  window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, serverTimestamp };
 </script>
 
 <style>
@@ -445,12 +447,12 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <div class="topbar">
   <div class="topbar-l">
     <a href="tel:+917373720302"><i class="fas fa-phone"></i>73737 20302</a>
-    <a href="/cdn-cgi/l/email-protection#e58c8b838aa58f8793808b919097808497868d8c9180869196cb868a88"><i class="fas fa-envelope"></i><span class="__cf_email__" data-cfemail="254c4b434a654f4753404b515057404457464d4c51404651560b464a48">[email&#160;protected]</span></a>
+    <a href="/cdn-cgi/l/email-protection#6d04030b022d070f1b080319181f080c1f0e050419080e191e430e0200"><i class="fas fa-envelope"></i><span class="__cf_email__" data-cfemail="94fdfaf2fbd4fef6e2f1fae0e1e6f1f5e6f7fcfde0f1f7e0e7baf7fbf9">[email&#160;protected]</span></a>
   </div>
   <div class="topbar-r">
     <span><i class="fas fa-map-marker-alt"></i>Thoothukudi, Tamil Nadu</span>
     <span><i class="fas fa-clock"></i>Mon–Sat: 9AM–7PM</span>
-    <!-- admin link moved to navbar -->
+    <a href="#" id="adminLink" onclick="showAdminPortal(event)"><i class="fas fa-lock"></i> Admin</a>
   </div>
 </div>
 
@@ -481,13 +483,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     <a href="#contact">Contact</a>
     <a href="#contact" class="nav-cta">Get Quote</a>
   </div>
-  <div class="nav-user" style="display:flex;align-items:center;gap:10px">
-    <a href="#" id="adminNavBtn" onclick="showAdminPortal(event)"
-       style="display:inline-flex;align-items:center;gap:6px;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.35);color:var(--red);padding:8px 14px;border-radius:3px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .25s;cursor:pointer"
-       onmouseover="this.style.background='var(--red)';this.style.color='white'"
-       onmouseout="this.style.background='rgba(192,57,43,0.12)';this.style.color='var(--red)'">
-      <i class="fas fa-shield-alt"></i> Admin
-    </a>
+  <div class="nav-user">
     <div id="navUserArea">
       <button class="btn-login" onclick="openLogin()"><i class="fas fa-user"></i> Sign In</button>
     </div>
@@ -882,76 +878,80 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <a class="wa-quick" href="https://wa.me/917373720302?text=Hi JB Venture!" target="_blank"><i class="fab fa-whatsapp"></i></a>
 <button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
-<!-- ══════ AUTH OVERLAY ══════ -->
+<!-- ══════ AUTH OVERLAY (Two-Step: Sign In → Phone) ══════ -->
 <div class="overlay" id="authOverlay">
-  <div class="modal" style="max-width:460px">
+  <div class="modal">
     <div class="modal-head">
-      <h2>Welcome to JB Venture</h2>
+      <h2 id="authModalTitle">Welcome to JB Venture</h2>
       <button class="modal-close" onclick="closeLogin()"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
-      <div class="modal-logo" style="text-align:center;margin-bottom:24px">
-        <div class="logo-text" style="font-size:22px;text-align:center">JB <em>Venture</em></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Sign in to continue</div>
-      </div>
 
-      <!-- Phone Number Field -->
-      <div style="margin-bottom:16px">
-        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">
-          Phone Number <span style="color:var(--red)">*</span>
-        </label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="loginCountry" style="padding:12px 10px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;min-width:110px">
-            <option value="+91">🇮🇳 +91</option>
-            <option value="+1">🇺🇸 +1</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+61">🇦🇺 +61</option>
-            <option value="+971">🇦🇪 +971</option>
-            <option value="+65">🇸🇬 +65</option>
-          </select>
-          <div style="flex:1;position:relative">
-            <input type="tel" id="loginPhone" placeholder="Enter phone number"
-              style="width:100%;padding:12px 40px 12px 14px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .25s"
-              oninput="validatePhone(this)"
-              onfocus="this.style.borderColor='var(--red)'"
-              onblur="this.style.borderColor=this.value.length>=8?'#2ed573':'var(--border)'"
-            />
-            <!-- Green tick appears when phone valid -->
-            <span id="phoneTick" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:18px;color:#2ed573;display:none">✓</span>
-          </div>
+      <!-- STEP 1: Sign In -->
+      <div id="authStep1">
+        <div class="modal-logo">
+          <div class="logo-text" style="font-size:20px;text-align:center">JB <em>Venture</em></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Sign in to continue</div>
         </div>
-        <div id="phoneHint" style="font-size:11px;color:var(--muted);margin-top:6px">Enter your phone number to continue</div>
+
+        <button class="auth-btn" onclick="signInGoogle()">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+          Continue with Google
+        </button>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <a href="https://wa.me/917373720302?text=Hi JB Venture! I want to know more about your services."
+             target="_blank"
+             class="auth-btn" style="flex:1;background:rgba(37,211,102,0.1);border-color:rgba(37,211,102,0.3);color:#25d366;text-decoration:none">
+            <i class="fab fa-whatsapp" style="font-size:20px;color:#25d366"></i>
+            Chat on WhatsApp
+          </a>
+        </div>
+        <p class="modal-note">By signing in, you agree to our Terms of Service. Your email and profile data may be saved to personalise your experience.</p>
       </div>
 
-      <!-- Error box -->
-      <div id="authModalError" style="display:none;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:12px;line-height:1.6;text-align:center"></div>
-
-      <!-- Google Button -->
-      <button class="auth-btn" id="googleSignInBtn" onclick="signInGoogle()" style="position:relative">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px">
-        <span id="googleBtnText">Continue with Google</span>
-        <span id="googleBtnSpinner" style="display:none"><i class="fas fa-spinner fa-spin"></i></span>
-      </button>
-
-      <!-- Success state (hidden until login) -->
-      <div id="loginSuccess" style="display:none;text-align:center;padding:20px 0">
-        <div style="width:60px;height:60px;background:rgba(46,213,115,0.15);border:2px solid #2ed573;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:#2ed573">✓</div>
-        <div style="font-size:16px;font-weight:700;color:var(--white)" id="successName">Signed in!</div>
-        <div style="font-size:13px;color:var(--muted);margin-top:4px" id="successEmail"></div>
-        <button onclick="closeLogin()" class="btn-primary" style="margin-top:16px;width:100%;justify-content:center">Continue to Website →</button>
+      <!-- STEP 2: Phone Collection (shown after Google login) -->
+      <div id="authStep2" style="display:none">
+        <div style="text-align:center;margin-bottom:20px">
+          <div id="authUserAvatar" style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--white);margin:0 auto 10px;overflow:hidden"></div>
+          <div style="font-size:15px;font-weight:600;color:var(--white)" id="authUserName"></div>
+          <div style="font-size:12px;color:var(--muted)" id="authUserEmail"></div>
+        </div>
+        <p style="color:var(--muted);font-size:13.5px;margin-bottom:20px;text-align:center">
+          <i class="fas fa-phone-alt" style="color:var(--red);margin-right:6px"></i>
+          One last step — please add your phone number so our team can contact you.
+        </p>
+        <div class="a-form-group">
+          <label>Country</label>
+          <select id="countrySelect" style="width:100%;padding:12px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none">
+            <option value="+91">🇮🇳 India (+91)</option>
+            <option value="+1">🇺🇸 USA (+1)</option>
+            <option value="+44">🇬🇧 UK (+44)</option>
+            <option value="+61">🇦🇺 Australia (+61)</option>
+            <option value="+971">🇦🇪 UAE (+971)</option>
+            <option value="+65">🇸🇬 Singapore (+65)</option>
+          </select>
+        </div>
+        <div class="a-form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="userPhone" class="phone-input" style="width:100%;padding:12px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none" placeholder="Enter your mobile number" onkeydown="if(event.key==='Enter')savePhone()"/>
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="savePhone()">
+          <i class="fas fa-check"></i> Save & Continue
+        </button>
+        <p class="modal-note">Your phone number will only be used by JB Venture team to contact you. We won't spam you.</p>
       </div>
 
-      <p class="modal-note" style="margin-top:12px">By signing in, you agree to our Terms of Service. Your data is safe and secure.</p>
     </div>
   </div>
 </div>
 
-<!-- Phone overlay removed - phone collected inside login modal -->
+<!-- Keep phoneOverlay as hidden fallback (for back-compat) -->
+<div id="phoneOverlay" style="display:none"></div>
 
 <!-- ══════ ADMIN PORTAL ══════ -->
 <div class="admin-wrap" id="adminPortal">
   <!-- Admin Login -->
-  <div class="admin-login" id="adminLoginScreen" style="display:flex">
+  <div class="admin-login" id="adminLoginScreen">
     <div class="admin-login-box">
       <div class="logo-text" style="font-size:22px;margin-bottom:6px">JB <em>Venture</em></div>
       <div style="font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px">Admin Portal</div>
@@ -1055,12 +1055,13 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
               <div class="upload-zone" id="uploadZone" onclick="document.getElementById('projFile').click()">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Click to upload project image (JPG, PNG, WebP)</p>
-                <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,.3)">Max size: 5MB</p>
+                <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,.3)">Max size: 800KB — stored directly in Firestore</p>
               </div>
               <input type="file" id="projFile" accept="image/*" style="display:none" onchange="handleFileUpload(this)"/>
               <div id="uploadPreview" style="margin-top:12px;display:none">
                 <img id="previewImg" style="max-height:120px;border-radius:4px;border:1px solid var(--border)"/>
                 <span id="previewName" style="font-size:12px;color:var(--muted);margin-left:10px;vertical-align:middle"></span>
+                <span id="previewSize" style="font-size:11px;margin-left:8px;vertical-align:middle"></span>
               </div>
               <div style="display:flex;gap:12px;margin-top:16px">
                 <button class="btn-red btn-admin" onclick="addProject()"><i class="fas fa-plus"></i>Add Project</button>
@@ -1139,15 +1140,12 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <div class="toast" id="toast"></div>
 
 <!-- ══════ JAVASCRIPT ══════ */-->
-<script>
-/* ═══════════════════════════════════════
-   JB VENTURE — COMPLETE JS
-═══════════════════════════════════════ */
-
-/* ─── ADMIN CREDENTIALS ─── */
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ─── ADMIN CREDENTIALS (change as needed) ─── */
 const ADMIN_USER = 'admin';
-let adminPassCurrent = 'jbventure2025';
+const ADMIN_PASS = 'jbventure2025';
 let adminLoggedIn = false;
+let adminPassCurrent = 'jbventure2025';
 
 /* ─── STATE ─── */
 let currentUser = null;
@@ -1162,13 +1160,13 @@ let localUsers = [];
 let localMessages = [];
 let uploadedFileData = null;
 
-/* ─── FIREBASE ─── */
-function getFirebase(){ return window._fb || null; }
+/* ─── FIREBASE AUTH ─── */
+function getFirebase(){return window._fb || null}
 
-window.addEventListener('load', () => {
+window.addEventListener('load',()=>{
   const fb = getFirebase();
   if(fb){
-    fb.onAuthStateChanged(fb.auth, user => {
+    fb.onAuthStateChanged(fb.auth,(user)=>{
       if(user){
         currentUser = user;
         updateNavUser(user);
@@ -1182,21 +1180,22 @@ window.addEventListener('load', () => {
   }
   runAnim();
   loadProjectsToSite();
+  document.getElementById('adminLink').style.display='block';
 });
 
-/* ─── NAV USER ─── */
 function updateNavUser(user){
   const area = document.getElementById('navUserArea');
   if(user){
-    const avatar = user.photoURL
-      ? `<img src="${user.photoURL}" style="width:30px;height:30px;border-radius:50%;object-fit:cover"/>`
-      : `<span style="font-size:13px;font-weight:700">${(user.displayName||'U').charAt(0)}</span>`;
+    const img = user.photoURL ? `<img src="${user.photoURL}" alt=""/>` : user.displayName?.charAt(0)||'U';
     area.innerHTML = `
       <div class="user-pill" onclick="showUserMenu()">
-        <div class="user-av">${avatar}</div>
+        <div class="user-av">${typeof img==='string'&&img.startsWith('<img') ? img : `<span>${img}</span>`}</div>
         <div class="user-name">${user.displayName||user.email||'User'}</div>
         <i class="fas fa-chevron-down" style="font-size:10px;color:var(--muted);margin-left:4px"></i>
-      </div>`;
+      </div>
+    `;
+    const emailSpan = document.getElementById('userEmailDisplay');
+    if(emailSpan) emailSpan.textContent = user.email;
   } else {
     area.innerHTML = `<button class="btn-login" onclick="openLogin()"><i class="fas fa-user"></i> Sign In</button>`;
   }
@@ -1204,108 +1203,96 @@ function updateNavUser(user){
 
 function showUserMenu(){
   const fb = getFirebase();
-  if(!currentUser) return;
-  const choice = confirm(`Signed in as: ${currentUser.displayName||currentUser.email}
-
-Click OK to sign out.`);
-  if(choice && fb){
-    fb.signOut(fb.auth).then(() => {
-      currentUser = null;
-      updateNavUser(null);
-      toast('Signed out successfully');
-    });
+  if(confirm('Sign out from JB Venture?')){
+    if(fb) fb.signOut(fb.auth).then(()=>{ currentUser=null; updateNavUser(null); toast('Signed out successfully'); });
   }
 }
 
-/* ─── PHONE VALIDATION ─── */
-function validatePhone(input){
-  const val = input.value.replace(/\D/g,'');
-  const tick = document.getElementById('phoneTick');
-  const hint = document.getElementById('phoneHint');
-  if(val.length >= 8){
-    input.style.borderColor = '#2ed573';
-    tick.style.display = 'block';
-    hint.innerHTML = '<span style="color:#2ed573">✓ Phone number looks good!</span>';
-  } else {
-    input.style.borderColor = 'var(--border)';
-    tick.style.display = 'none';
-    hint.innerHTML = '<span style="color:var(--muted)">Enter your phone number to continue</span>';
-  }
-}
-
-/* ─── SIGN IN WITH GOOGLE ─── */
 async function signInGoogle(){
   const fb = getFirebase();
-
-  // Detect file:// protocol
+  if(!fb){ showAuthError('Firebase not initialised.'); return; }
+  
+  // Check if running from file:// 
   if(window.location.protocol === 'file:'){
-    showAuthError('⚠️ Please open via Live Server (http://) not file://
-Use VS Code → Go Live button');
+    showAuthError('⚠️ Open via Live Server (http://), not file://. Use VS Code → Go Live.');
     return;
   }
-  if(!fb){ showAuthError('Firebase not initialised'); return; }
-
-  // Get phone from modal
-  const phoneInput = document.getElementById('loginPhone');
-  const countrySelect = document.getElementById('loginCountry');
-  const phone = phoneInput ? phoneInput.value.trim() : '';
-  const country = countrySelect ? countrySelect.value : '+91';
-
-  if(!phone || phone.replace(/\D/g,'').length < 8){
-    phoneInput.style.borderColor = 'var(--red)';
-    document.getElementById('phoneHint').innerHTML = '<span style="color:var(--red)">⚠ Please enter your phone number first</span>';
-    phoneInput.focus();
-    return;
-  }
-
-  // Loading state
-  const btn = document.getElementById('googleSignInBtn');
-  const btnText = document.getElementById('googleBtnText');
-  const spinner = document.getElementById('googleBtnSpinner');
-  if(btn){ btn.disabled=true; btnText.textContent='Signing in...'; spinner.style.display='inline'; }
-
+  
   try{
     const provider = new fb.GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');
     const result = await fb.signInWithPopup(fb.auth, provider);
     const user = result.user;
-
-    // Save user + phone to Firestore
-    await saveUserToFirestore(user, { phone: country + phone.replace(/\D/g,''), country });
-
-    // Show success state inside modal
-    document.getElementById('loginSuccess').style.display = 'block';
-    document.getElementById('successName').textContent = '✓ Welcome, ' + (user.displayName || 'User') + '!';
-    document.getElementById('successEmail').textContent = user.email || '';
-    btn.style.display = 'none';
-    document.getElementById('phoneHint').innerHTML = '';
-    phoneInput.parentElement.parentElement.style.display = 'none';
-
-    toast('Welcome, ' + (user.displayName||'User') + '! 🎉');
-
-    // Auto close modal after 2s
-    setTimeout(() => closeLogin(), 2000);
-
+    // Check if phone already saved
+    let needPhone = true;
+    try{
+      const docRef = fb.doc(fb.db,'users',user.uid);
+      const snap = await fb.getDoc(docRef);
+      if(snap.exists() && snap.data().phone) needPhone = false;
+    } catch(fe){ console.warn('Firestore:', fe.message); }
+    if(needPhone){
+      // Step 2: show phone collection inside same modal
+      document.getElementById('authModalTitle').textContent = 'Almost There!';
+      document.getElementById('authStep1').style.display = 'none';
+      document.getElementById('authStep2').style.display = 'block';
+      const avEl = document.getElementById('authUserAvatar');
+      if(user.photoURL){ avEl.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`; }
+      else { avEl.textContent = (user.displayName||'U').charAt(0); }
+      document.getElementById('authUserName').textContent = user.displayName||'';
+      document.getElementById('authUserEmail').textContent = user.email||'';
+      setTimeout(()=>document.getElementById('userPhone').focus(), 200);
+    } else {
+      closeLogin();
+      toast('Welcome back, ' + (user.displayName||'User') + '! ✅');
+    }
   } catch(e){
-    const code = e.code || '';
-    if(btn){ btn.disabled=false; btnText.textContent='Continue with Google'; spinner.style.display='none'; }
-    if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
-    if(code.includes('api-key-not-valid'))
-      showAuthError('⚠️ Open via Live Server (http://), not file://');
-    else if(code === 'auth/popup-blocked')
-      showAuthError('🚫 Popup blocked! Allow popups for this site in browser settings');
-    else if(code === 'auth/unauthorized-domain')
-      showAuthError('🚫 Add this domain in Firebase → Auth → Authorized Domains');
+    const code = e.code||'';
+    if(code==='auth/popup-closed-by-user'||code==='auth/cancelled-popup-request') return;
+    if(code==='auth/api-key-not-valid.-please-pass-a-valid-api-key'||code==='auth/api-key-not-valid')
+      showAuthError('⚠️ Open via Live Server (http://localhost), not file://');
+    else if(code==='auth/popup-blocked')
+      showAuthError('🚫 Popup blocked! Allow popups for this site in your browser settings.');
+    else if(code==='auth/unauthorized-domain')
+      showAuthError('🚫 Domain not authorized. Add localhost in Firebase → Auth → Authorized Domains.');
     else
-      showAuthError('Sign in failed: ' + (e.message || code));
+      showAuthError('Error: ' + (e.message||code));
   }
 }
 
+
+
+function demoAuthMsg(){
+  toast('Firebase not configured. Add your Firebase config to enable auth.','warn');
+  setTimeout(closeLogin,1500);
+}
+
 function showAuthError(msg){
-  const el = document.getElementById('authModalError');
-  if(el){ el.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg; el.style.display='block'; }
-  setTimeout(()=>{ if(el) el.style.display='none'; }, 6000);
+  // Show error inside modal
+  let errEl = document.getElementById('authModalError');
+  if(!errEl){
+    errEl = document.createElement('div');
+    errEl.id = 'authModalError';
+    errEl.style.cssText = 'background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;padding:12px 16px;border-radius:4px;font-size:13px;margin-top:12px;line-height:1.6;text-align:center';
+    document.querySelector('.modal-body').appendChild(errEl);
+  }
+  errEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+  errEl.style.display = 'block';
+  setTimeout(()=>{ if(errEl) errEl.style.display='none'; }, 6000);
+}
+
+async function savePhone(){
+  const phone = document.getElementById('userPhone').value.trim();
+  const country = document.getElementById('countrySelect').value;
+  if(!phone){toast('Please enter your phone number','warn');return;}
+  closePhone();
+  if(currentUser){
+    const fb = getFirebase();
+    if(fb){
+      await saveUserToFirestore(currentUser,{phone:country+phone,country});
+    }
+    toast('Welcome, '+(currentUser.displayName||'User')+'! Your profile is saved.');
+  }
 }
 
 async function saveUserToFirestore(user, extra={}){
@@ -1313,80 +1300,71 @@ async function saveUserToFirestore(user, extra={}){
   if(!fb) return;
   try{
     const docRef = fb.doc(fb.db,'users',user.uid);
-    await fb.setDoc(docRef, {
+    await fb.setDoc(docRef,{
       name: user.displayName||'',
       email: user.email||'',
       photoURL: user.photoURL||'',
-      provider: user.providerData[0]?.providerId||'google',
+      provider: user.providerData[0]?.providerId||'unknown',
       joinedAt: fb.serverTimestamp(),
       ...extra
-    }, {merge:true});
-  } catch(e){ console.warn('Firestore save failed:', e.message); }
+    },{merge:true});
+  } catch(e){ console.warn('Firestore save failed:',e.message); }
 }
 
 /* ─── AUTH MODALS ─── */
 function openLogin(){
-  // Reset modal to initial state
-  const success = document.getElementById('loginSuccess');
-  const btn = document.getElementById('googleSignInBtn');
-  const phoneRow = document.getElementById('loginPhone');
-  if(success) success.style.display='none';
-  if(btn){ btn.style.display='flex'; btn.disabled=false; document.getElementById('googleBtnText').textContent='Continue with Google'; document.getElementById('googleBtnSpinner').style.display='none'; }
-  if(phoneRow){ phoneRow.value=''; phoneRow.style.borderColor='var(--border)'; phoneRow.parentElement.parentElement.style.display='block'; }
-  const phoneTick = document.getElementById('phoneTick'); if(phoneTick) phoneTick.style.display='none';
-  const hint = document.getElementById('phoneHint'); if(hint) hint.innerHTML='Enter your phone number to continue';
-  const err = document.getElementById('authModalError'); if(err) err.style.display='none';
+  document.getElementById('authModalTitle').textContent = 'Welcome to JB Venture';
+  document.getElementById('authStep1').style.display = 'block';
+  document.getElementById('authStep2').style.display = 'none';
   document.getElementById('authOverlay').classList.add('on');
 }
-function closeLogin(){ document.getElementById('authOverlay').classList.remove('on'); }
-document.getElementById('authOverlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeLogin(); });
-
-/* ─── ADMIN PORTAL ─── */
-function showAdminPortal(e){
-  e.preventDefault();
-  document.getElementById('adminPortal').classList.add('on');
-  if(!adminLoggedIn){
-    document.getElementById('adminLoginScreen').style.display = 'flex';
-    document.getElementById('adminDashboard').style.display = 'none';
-    document.getElementById('adminUser').value = '';
-    document.getElementById('adminPass').value = '';
-    const err = document.getElementById('adminError');
-    if(err) err.style.display='none';
-  }
+function closeLogin(){
+  document.getElementById('authOverlay').classList.remove('on');
+  setTimeout(()=>{
+    document.getElementById('authModalTitle').textContent = 'Welcome to JB Venture';
+    document.getElementById('authStep1').style.display = 'block';
+    document.getElementById('authStep2').style.display = 'none';
+  }, 400);
 }
-function hideAdminPortal(){ document.getElementById('adminPortal').classList.remove('on'); }
+function closePhone(){ closeLogin(); }
+document.getElementById('authOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLogin()});
+
+/* ─── ADMIN ─── */
+function showAdminPortal(e){e.preventDefault();document.getElementById('adminPortal').classList.add('on')}
+function hideAdminPortal(){document.getElementById('adminPortal').classList.remove('on')}
 
 function adminLogin(){
   const u = document.getElementById('adminUser').value.trim();
   const p = document.getElementById('adminPass').value;
   const err = document.getElementById('adminError');
-  if(u === ADMIN_USER && p === adminPassCurrent){
+  if(u===ADMIN_USER && p===adminPassCurrent){
     err.style.display='none';
-    adminLoggedIn = true;
-    document.getElementById('adminLoginScreen').style.display = 'none';
-    document.getElementById('adminDashboard').style.display = 'flex';
+    adminLoggedIn=true;
+    document.getElementById('adminLoginScreen').style.display='none';
+    const db = document.getElementById('adminDashboard');
+    db.style.display='flex';
     loadDashboardStats();
     loadProjectsTable();
     loadUsers();
     loadMessages();
   } else {
-    err.style.display = 'block';
-    document.getElementById('adminPass').value = '';
+    err.style.display='block';
+    document.getElementById('adminPass').value='';
   }
 }
 
 function adminLogout(){
-  adminLoggedIn = false;
-  document.getElementById('adminDashboard').style.display = 'none';
-  document.getElementById('adminLoginScreen').style.display = 'flex';
-  document.getElementById('adminUser').value = '';
-  document.getElementById('adminPass').value = '';
+  adminLoggedIn=false;
+  document.getElementById('adminDashboard').style.display='none';
+  document.getElementById('adminLoginScreen').style.display='flex';
+  document.getElementById('adminUser').value='';
+  document.getElementById('adminPass').value='';
 }
 
 function showPanel(name, el){
-  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
   el.classList.add('active');
   if(name==='projects') loadProjectsTable();
   if(name==='users') loadUsers();
@@ -1396,12 +1374,12 @@ function showPanel(name, el){
 function changePassword(){
   const curr = document.getElementById('currPass').value;
   const nw = document.getElementById('newPass').value;
-  if(curr !== adminPassCurrent){ toast('Current password incorrect','warn'); return; }
-  if(!nw || nw.length < 6){ toast('New password must be 6+ characters','warn'); return; }
-  adminPassCurrent = nw;
-  document.getElementById('currPass').value = '';
-  document.getElementById('newPass').value = '';
-  toast('Password updated! ✅');
+  if(curr!==adminPassCurrent){toast('Current password is incorrect','warn');return;}
+  if(!nw||nw.length<6){toast('New password must be at least 6 characters','warn');return;}
+  adminPassCurrent=nw;
+  document.getElementById('currPass').value='';
+  document.getElementById('newPass').value='';
+  toast('Password updated successfully!');
 }
 
 /* ─── PROJECTS ─── */
@@ -1411,21 +1389,18 @@ async function loadProjectsFromFirebase(){
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
     if(!snap.empty){
-      localProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      localProjects = snap.docs.map(d=>({id:d.id,...d.data()}));
       loadProjectsToSite();
     }
-  } catch(e){ console.warn('Firebase load:', e.message); }
+  } catch(e){ console.warn('Firebase load fail:',e.message); }
 }
 
 function loadProjectsToSite(){
   const grid = document.getElementById('projectsGrid');
-  if(!localProjects.length){
-    grid.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center">No projects yet.</p>';
-    return;
-  }
-  grid.innerHTML = localProjects.map((p,i) => `
-    <div class="proj-card ${i===0?'big':''} fi d${Math.min(i,5)}">
-      <div class="proj-bg" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);background-image:url('${p.img||''}');background-size:cover;background-position:center"></div>
+  if(!localProjects.length){grid.innerHTML='<p style="color:var(--muted);padding:40px;text-align:center">No projects yet.</p>';return;}
+  grid.innerHTML = localProjects.map((p,i)=>`
+    <div class="proj-card ${i===0?'big':''} fi d${i}">
+      <div class="proj-bg" style="background-image:url('${p.img||''}');background-size:cover;background-position:center"></div>
       <div class="proj-overlay">
         <div class="proj-cat">${p.category||''}</div>
         <h3>${p.title||''}</h3>
@@ -1433,7 +1408,6 @@ function loadProjectsToSite(){
       </div>
     </div>
   `).join('');
-  runAnim();
 }
 
 function loadDashboardStats(){
@@ -1441,46 +1415,66 @@ function loadDashboardStats(){
   document.getElementById('dashUsers').textContent = localUsers.length;
   document.getElementById('dashMessages').textContent = localMessages.length;
   const ra = document.getElementById('recentActivity');
-  const items = [
-    ...localProjects.slice(0,3).map(p=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">🏗️ <strong style="color:var(--white)">${p.title}</strong> <span class="badge badge-green" style="margin-left:8px">${p.status||'Active'}</span></div>`),
-    ...localUsers.slice(0,3).map(u=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">👤 <strong style="color:var(--white)">${u.name||u.email||'User'}</strong> <span style="font-size:12px;color:var(--muted)">${u.email||''}</span></div>`)
+  const items = [...localProjects.slice(0,3).map(p=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">🏗️ Project: <strong style="color:var(--white)">${p.title}</strong> — <span class="badge badge-green">${p.status||'Active'}</span></div>`),
+    ...localUsers.slice(0,3).map(u=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">👤 New user: <strong style="color:var(--white)">${u.name||u.email||'User'}</strong></div>`)
   ];
-  ra.innerHTML = items.length ? items.join('') : '<div style="color:var(--muted);padding:12px 0">No recent activity yet.</div>';
+  ra.innerHTML = items.length ? items.join('') : '<div style="color:var(--muted)">No recent activity yet.</div>';
 }
 
 function loadProjectsTable(){
   const tbody = document.getElementById('projectsTableBody');
-  tbody.innerHTML = localProjects.map(p => `
+  tbody.innerHTML = localProjects.map(p=>`
     <tr>
-      <td>${p.img ? `<img src="${p.img}" class="proj-thumb" onerror="this.style.display='none'"/>` : '<span style="color:var(--muted)">—</span>'}</td>
-      <td style="font-weight:600;color:var(--white)">${p.title||''}</td>
+      <td>${p.img?`<img src="${p.img}" class="proj-thumb" onerror="this.style.display='none'"/>`:'<span style="color:var(--muted)">No img</span>'}</td>
+      <td>${p.title||''}</td>
       <td><span class="badge badge-yellow">${p.category||''}</span></td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${p.desc||''}</td>
-      <td><span class="badge ${p.status==='Completed'?'badge-yellow':'badge-green'}">${p.status||'Active'}</span></td>
-      <td><button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px"><i class="fas fa-trash"></i></button></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.desc||''}</td>
+      <td><span class="badge badge-green">${p.status||'Active'}</span></td>
+      <td><button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 12px;font-size:12px"><i class="fas fa-trash"></i></button></td>
     </tr>
-  `).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects yet.</td></tr>';
+  `).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects.</td></tr>';
 }
 
 async function addProject(){
   const title = document.getElementById('projTitle').value.trim();
   const category = document.getElementById('projCategory').value;
   const desc = document.getElementById('projDesc').value.trim();
-  const imgData = uploadedFileData || document.getElementById('projImgUrl').value.trim();
-  if(!title){ toast('Please enter a project title','warn'); return; }
+  const imgUrl = document.getElementById('projImgUrl').value.trim();
+  // Use uploaded base64 or URL
+  const imgData = uploadedFileData || imgUrl;
+  if(!title){toast('Please enter a project title','warn');return;}
+  
+  // Check base64 size — Firestore doc limit is ~1MB
+  if(uploadedFileData){
+    const kb = Math.round((uploadedFileData.length * 0.75)/1024);
+    if(kb > 900){
+      toast('Image too large for Firestore (max ~900KB). Please use a URL instead.','warn');
+      return;
+    }
+  }
 
-  const proj = {id:'p'+Date.now(), title, category, desc, img:imgData, status:'Active', createdAt:new Date().toISOString()};
+  const proj = {id:'p'+Date.now(),title,category,desc,img:imgData,status:'Active',createdAt:new Date().toISOString()};
+  
   const fb = getFirebase();
   if(fb){
     try{
-      const ref = await fb.addDoc(fb.collection(fb.db,'projects'), proj);
-      proj.id = ref.id;
+      // Store image separately if base64 to keep main doc small
+      const docData = {...proj};
+      const fbRef = await fb.addDoc(fb.collection(fb.db,'projects'), docData);
+      proj.id = fbRef.id;
       toast('Project saved to Firebase! ✅');
     } catch(e){
-      console.warn(e.message);
-      toast('Saved locally (Firebase: '+e.message+')','warn');
+      console.warn('Firebase error:',e.message);
+      if(e.message.includes('exceeds')||e.code==='resource-exhausted'){
+        toast('Image too large for Firestore. Use a URL instead.','warn');
+        return;
+      }
+      toast('Saved locally (Firebase error: '+e.message+')','warn');
     }
+  } else {
+    toast('Project added locally (Firebase not connected)');
   }
+  
   localProjects.unshift(proj);
   loadProjectsToSite();
   loadProjectsTable();
@@ -1489,12 +1483,12 @@ async function addProject(){
 }
 
 async function deleteProject(id){
-  if(!confirm('Delete this project from website?')) return;
+  if(!confirm('Delete this project?')) return;
   const fb = getFirebase();
   if(fb){
     try{ await fb.deleteDoc(fb.doc(fb.db,'projects',id)); } catch(e){ console.warn(e.message); }
   }
-  localProjects = localProjects.filter(p => p.id !== id);
+  localProjects = localProjects.filter(p=>p.id!==id);
   loadProjectsToSite();
   loadProjectsTable();
   loadDashboardStats();
@@ -1502,33 +1496,43 @@ async function deleteProject(id){
 }
 
 function clearProjectForm(){
-  ['projTitle','projDesc','projImgUrl'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('projTitle').value='';
+  document.getElementById('projDesc').value='';
+  document.getElementById('projImgUrl').value='';
   document.getElementById('uploadPreview').style.display='none';
-  uploadedFileData = null;
+  uploadedFileData=null;
 }
 
 function handleFileUpload(input){
   const file = input.files[0];
   if(!file) return;
-  if(file.size > 4*1024*1024){ toast('File too large. Use image under 4MB.','warn'); return; }
+  if(file.size > 4*1024*1024){toast('File too large. Please use an image under 4MB.','warn');return;}
+  
+  // Compress image using canvas before storing as base64
   const reader = new FileReader();
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
+      // Scale down to max 800px wide
       const MAX = 800;
       let w = img.width, h = img.height;
-      if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
+      if(w > MAX){ h = Math.round(h * MAX/w); w = MAX; }
       canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      // Compress to JPEG at 75% quality
       const compressed = canvas.toDataURL('image/jpeg', 0.75);
       uploadedFileData = compressed;
       document.getElementById('previewImg').src = compressed;
       document.getElementById('previewName').textContent = file.name;
-      const kb = Math.round((compressed.length*0.75)/1024);
+      // Show compressed size
+      const kb = Math.round((compressed.length * 0.75) / 1024);
+      const sizeEl = document.getElementById('previewSize');
+      if(sizeEl) sizeEl.textContent = `(~${kb} KB compressed)`;
+      sizeEl.style.color = kb > 900 ? 'var(--red)' : 'var(--yellow)';
       document.getElementById('uploadPreview').style.display='block';
-      if(kb > 900) toast('Image large after compression. Try a smaller one.','warn');
-      else toast('Image ready! (~' + kb + ' KB)');
+      if(kb > 900) toast('Image still large after compression. Try a smaller image.','warn');
     };
     img.src = e.target.result;
   };
@@ -1538,51 +1542,46 @@ function handleFileUpload(input){
 async function loadUsers(){
   const fb = getFirebase();
   const tbody = document.getElementById('usersTableBody');
-  if(!fb){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Firebase not configured</td></tr>'; return; }
+  if(!fb){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Firebase not configured</td></tr>';return;}
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'users'));
-    localUsers = snap.docs.map(d => ({id:d.id,...d.data()}));
-    const dashEl = document.getElementById('dashUsers');
-    if(dashEl) dashEl.textContent = localUsers.length;
+    localUsers = snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('dashUsers').textContent = localUsers.length;
     tbody.innerHTML = localUsers.length ? localUsers.map(u=>`
       <tr>
-        <td style="font-weight:600;color:var(--white)">${u.name||'—'}</td>
+        <td>${u.name||'—'}</td>
         <td>${u.email||'—'}</td>
         <td>${u.phone||'<span style="color:var(--muted)">Not provided</span>'}</td>
         <td>${u.country||'—'}</td>
-        <td><span class="badge badge-yellow">Google</span></td>
+        <td><span class="badge badge-yellow">${(u.provider||'').replace('com.','').replace('.com','').replace('google','Google').replace('microsoft','Microsoft')}</span></td>
         <td style="color:var(--muted);font-size:12px">${u.joinedAt?.toDate?.()?.toLocaleDateString('en-IN')||'—'}</td>
       </tr>
-    `).join('') : '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No users signed in yet.</td></tr>';
-  } catch(e){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:#e74c3c">'+e.message+'</td></tr>'; }
+    `).join('') : '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No users yet.</td></tr>';
+  } catch(e){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">'+e.message+'</td></tr>'; }
 }
 
 async function loadMessages(){
   const fb = getFirebase();
   const body = document.getElementById('messagesBody');
-  if(!fb){ body.innerHTML='<p style="padding:20px;color:var(--muted)">Firebase not configured</p>'; return; }
+  if(!fb){body.innerHTML='<p>Firebase not configured</p>';return;}
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'messages'));
-    localMessages = snap.docs.map(d => ({id:d.id,...d.data()}));
-    const dashEl = document.getElementById('dashMessages');
-    if(dashEl) dashEl.textContent = localMessages.length;
+    localMessages = snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('dashMessages').textContent = localMessages.length;
     body.innerHTML = localMessages.length ? localMessages.map(m=>`
-      <div style="padding:20px;border-bottom:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="color:var(--white);font-size:15px">${m.name||'Unknown'}</strong>
-          <span style="font-size:11px;color:var(--yellow);background:rgba(241,196,15,0.1);padding:3px 10px;border-radius:20px;border:1px solid rgba(241,196,15,0.2)">${m.service||'General'}</span>
+      <div style="padding:18px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <strong style="color:var(--white)">${m.name||'Unknown'}</strong>
+          <span style="font-size:12px;color:var(--muted)">${m.service||''}</span>
         </div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
-          <i class="fas fa-envelope" style="color:var(--red);margin-right:6px"></i>${m.email||''}
-          ${m.phone?`<span style="margin-left:14px"><i class="fas fa-phone" style="color:var(--red);margin-right:6px"></i>${m.phone}</span>`:''}
-        </div>
-        <div style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.6">${m.message||''}</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:4px">${m.email||''} ${m.phone?'· '+m.phone:''}</div>
+        <div style="font-size:13.5px;color:rgba(255,255,255,.6)">${m.message||''}</div>
       </div>
-    `).join('') : '<p style="text-align:center;padding:40px;color:var(--muted)">No messages yet.</p>';
-  } catch(e){ body.innerHTML='<p style="padding:20px;color:#e74c3c">'+e.message+'</p>'; }
+    `).join('') : '<p style="text-align:center;padding:32px;color:var(--muted)">No messages yet.</p>';
+  } catch(e){ body.innerHTML='<p>'+e.message+'</p>'; }
 }
 
-async function loadProjects(){ await loadProjectsFromFirebase(); toast('Projects refreshed'); }
+async function loadProjects(){loadProjectsFromFirebase();}
 
 /* ─── CONTACT FORM ─── */
 async function submitContact(btn){
@@ -1592,65 +1591,67 @@ async function submitContact(btn){
   const email = form.querySelector('input[type=email]').value.trim();
   const service = form.querySelector('select').value;
   const message = form.querySelector('textarea').value.trim();
-  if(!name||!phone||!email){ toast('Please fill all required fields','warn'); return; }
+  if(!name||!phone||!email){toast('Please fill all required fields','warn');return;}
   const fb = getFirebase();
   if(fb){
     try{
-      await fb.addDoc(fb.collection(fb.db,'messages'), {name,phone,email,service,message,createdAt:fb.serverTimestamp()});
+      await fb.addDoc(fb.collection(fb.db,'messages'),{name,phone,email,service,message,createdAt:fb.serverTimestamp()});
     } catch(e){ console.warn(e.message); }
   }
   localMessages.push({name,phone,email,service,message});
   toast('Message sent! We will contact you soon. 🏗️');
-  form.querySelectorAll('input,textarea').forEach(el => el.value='');
-  form.querySelector('select').selectedIndex = 0;
+  form.querySelectorAll('input,textarea').forEach(el=>el.value='');
+  form.querySelector('select').value=form.querySelector('select').options[0].value;
 }
 
-function nlSub(btn){ toast('Subscribed! Thank you. ✅'); btn.closest('.nl-form').querySelector('input').value=''; }
+function nlSub(btn){toast('Subscribed to newsletter! Thank you.');btn.closest('.nl-form').querySelector('input').value='';}
 
-/* ─── SCROLL ─── */
-let ctrRan = false;
-window.addEventListener('scroll', () => {
-  const s = window.scrollY;
-  const total = document.body.scrollHeight - window.innerHeight;
-  document.getElementById('scrollBar').style.width = ((s/total)*100) + '%';
-  document.getElementById('nav').classList.toggle('scrolled', s > 60);
-  document.getElementById('btt').classList.toggle('show', s > 400);
+/* ─── SCROLL EFFECTS ─── */
+let ctrRan=false;
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY;
+  document.getElementById('scrollBar').style.width=((s/(document.body.scrollHeight-window.innerHeight))*100)+'%';
+  document.getElementById('nav').classList.toggle('scrolled',s>60);
+  document.getElementById('btt').classList.toggle('show',s>400);
   runAnim();
   if(!ctrRan){
-    const el = document.querySelector('.hstat-num[data-t]');
-    if(el && el.getBoundingClientRect().top < window.innerHeight){
-      ctrRan = true;
-      document.querySelectorAll('.hstat-num[data-t]').forEach(el => {
-        const t = +el.dataset.t; let c = 0; const step = t/50;
-        const ti = setInterval(() => {
-          c = Math.min(c+step, t);
-          el.textContent = Math.round(c) + '+';
-          if(c >= t) clearInterval(ti);
-        }, 25);
+    const el=document.querySelector('.hstat-num[data-t]');
+    if(el&&el.getBoundingClientRect().top<window.innerHeight){
+      ctrRan=true;
+      document.querySelectorAll('.hstat-num[data-t]').forEach(el=>{
+        const t=+el.dataset.t;let c=0;const step=t/50;
+        const ti=setInterval(()=>{c=Math.min(c+step,t);el.textContent=Math.round(c)+(t>=100?'+':'+');if(c>=t)clearInterval(ti);},25);
       });
     }
   }
 });
 
 function runAnim(){
-  document.querySelectorAll('.fi,.fl,.fr').forEach(el => {
-    if(el.getBoundingClientRect().top < window.innerHeight - 60) el.classList.add('vis');
+  document.querySelectorAll('.fi,.fl,.fr').forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight-60) el.classList.add('vis');
   });
 }
 runAnim();
 
 /* ─── UTILS ─── */
-function mNavToggle(){ document.getElementById('mNav').classList.toggle('on'); }
-function togFloat(){ document.getElementById('floatItems').classList.toggle('on'); document.getElementById('fTog').classList.toggle('on'); }
+function mNavToggle(){document.getElementById('mNav').classList.toggle('on')}
+function togFloat(){document.getElementById('floatItems').classList.toggle('on');document.getElementById('fTog').classList.toggle('on')}
 
 function toast(msg, type='ok'){
-  const t = document.getElementById('toast');
+  let t = document.getElementById('toastEl');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toastEl';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
   t.textContent = msg;
-  t.style.borderColor = type==='warn'?'var(--yellow)':type==='error'?'var(--red)':'rgba(46,213,115,0.5)';
-  t.style.color = type==='warn'?'var(--yellow)':type==='error'?'#e74c3c':'var(--white)';
+  t.style.borderColor = type==='warn' ? 'rgba(192,57,43,0.4)' : 'var(--border)';
   t.classList.add('on');
-  setTimeout(() => t.classList.remove('on'), 3500);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('on'), 3200);
 }
+
 </script>
 </body>
 </html>
