@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JB Venture | Construction & Architects – Thoothukudi</title>
+<meta name="description" content="JB Venture – Premium construction and architecture in Thoothukudi, Tamil Nadu. 10+ years, 300 employees, 21+ active sites."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
+    authDomain: "site-356cd.firebaseapp.com",
+    databaseURL: "https://site-356cd-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "site-356cd",
+    storageBucket: "site-356cd.firebasestorage.app",
+    messagingSenderId: "1021929307309",
+    appId: "1:1021929307309:web:37aaa3be1120723d311a24",
+    measurementId: "G-DM0JYZK14X"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // expose globally
+  window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp };
+</script>
+
+<style>
+/* ══════ TOKENS ══════ */
+:root{
+  --black:#0a0a0a;
+  --ash:#1a1a1a;
+  --ash2:#252525;
+  --ash3:#2e2e2e;
+  --red:#c0392b;
+  --red2:#e74c3c;
+  --yellow:#f1c40f;
+  --yellow2:#f39c12;
+  --white:#ffffff;
+  --off:#e8e8e8;
+  --muted:#888;
+  --border:rgba(255,255,255,0.08);
+  --border-r:rgba(192,57,43,0.3);
+  --r:0px;
+  --shadow-r:0 8px 32px rgba(192,57,43,0.35);
+  --shadow-y:0 8px 32px rgba(241,196,15,0.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--off);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+
+/* ══════ SCROLLBAR ══════ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--ash)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* ══════ SCROLL PROGRESS ══════ */
+#scrollBar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--red),var(--yellow));z-index:9999;width:0;transition:width .1s}
+
+/* ══════ TOPBAR ══════ */
+.topbar{background:var(--ash);color:rgba(255,255,255,.55);font-size:12px;padding:8px 5%;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.topbar-l,.topbar-r{display:flex;align-items:center;gap:18px}
+.topbar a{color:rgba(255,255,255,.55);transition:color .2s}
+.topbar a:hover{color:var(--yellow)}
+.topbar i{color:var(--red);margin-right:5px}
+
+/* ══════ NAV ══════ */
+#nav{position:sticky;top:0;z-index:1000;background:rgba(10,10,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:72px;transition:all .3s}
+#nav.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.logo-wrap{display:flex;align-items:center;gap:14px}
+.logo-symbol{width:44px;height:44px;position:relative}
+.logo-symbol svg{width:100%;height:100%}
+.logo-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--white);letter-spacing:1px;line-height:1}
+.logo-text em{color:var(--red);font-style:normal}
+.logo-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'DM Sans',sans-serif}
+.nav-menu{display:flex;align-items:center;gap:4px}
+.nav-menu a{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);padding:8px 14px;border-radius:3px;letter-spacing:.3px;transition:all .25s;position:relative}
+.nav-menu a:hover,.nav-menu a.active{color:var(--yellow)}
+.nav-cta{background:var(--red)!important;color:var(--white)!important;padding:9px 20px!important;border-radius:3px!important;font-weight:600!important;box-shadow:var(--shadow-r)}
+.nav-cta:hover{background:var(--red2)!important;transform:translateY(-1px)}
+.nav-user{display:flex;align-items:center;gap:10px}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--ash2);border:1px solid var(--border);padding:6px 14px 6px 6px;border-radius:30px;cursor:pointer;transition:all .25s}
+.user-pill:hover{border-color:var(--red)}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);overflow:hidden}
+.user-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-name{font-size:12px;font-weight:600;color:var(--white);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-login{background:transparent;border:1.5px solid var(--red);color:var(--red);padding:8px 18px;border-radius:3px;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif}
+.btn-login:hover{background:var(--red);color:var(--white)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}
+.hamburger span{width:24px;height:2px;background:var(--white);display:block;transition:.3s;border-radius:2px}
+
+/* ══════ MOBILE NAV ══════ */
+.m-nav{position:fixed;inset:0;background:var(--ash);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;pointer-events:none;transition:opacity .3s}
+.m-nav.on{opacity:1;pointer-events:all}
+.m-nav a{font-family:'Playfair Display',serif;font-size:32px;color:rgba(255,255,255,.5);transition:color .25s}
+.m-nav a:hover{color:var(--yellow)}
+.m-nav-x{position:absolute;top:22px;right:22px;background:none;border:none;color:var(--red);font-size:28px;cursor:pointer}
+
+/* ══════ HERO ══════ */
+.hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(130deg,rgba(10,10,10,0.92) 35%,rgba(192,57,43,0.15) 70%,rgba(10,10,10,0.85) 100%),
+    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') center/cover no-repeat;
+  transform:scale(1.04);
+  animation:heroZoom 10s ease-out forwards;
+}
+@keyframes heroZoom{to{transform:scale(1)}}
+.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:1}
+.hero-body{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8%;max-width:900px}
+.hero-tag{display:inline-flex;align-items:center;gap:12px;color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:22px;animation:fadeUp .8s .2s both}
+.hero-tag::before{content:'';width:36px;height:2px;background:var(--yellow)}
+.hero-tag::after{content:'';width:36px;height:2px;background:var(--yellow)}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,10vw,130px);line-height:.92;color:var(--white);margin-bottom:24px;animation:fadeUp .8s .3s both;letter-spacing:2px}
+.hero h1 em{color:var(--red);font-style:normal;-webkit-text-stroke:0px}
+.hero h1 .outline{-webkit-text-stroke:2px rgba(255,255,255,0.4);color:transparent}
+.hero-desc{font-size:17px;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:40px;max-width:520px;animation:fadeUp .8s .4s both}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .8s .5s both}
+.btn-primary{background:var(--red);color:var(--white);padding:16px 36px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;letter-spacing:.8px;border-radius:3px;display:inline-flex;align-items:center;gap:10px;box-shadow:var(--shadow-r);transition:all .3s;text-transform:uppercase}
+.btn-primary:hover{background:var(--red2);transform:translateY(-2px);box-shadow:0 14px 40px rgba(192,57,43,0.5)}
+.btn-outline{background:transparent;color:var(--white);padding:15px 36px;border:1.5px solid rgba(255,255,255,.35);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;border-radius:3px;display:inline-flex;align-items:center;gap:10px;transition:all .3s;letter-spacing:.5px}
+.btn-outline:hover{border-color:var(--yellow);color:var(--yellow)}
+
+/* Hero stats bar */
+.hero-stats{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(26,26,26,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
+.hstat{padding:24px 28px;border-right:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.hstat:last-child{border-right:none}
+.hstat-icon{width:44px;height:44px;min-width:44px;background:rgba(192,57,43,0.15);border:1px solid var(--border-r);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--red)}
+.hstat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--white);line-height:1}
+.hstat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+/* ══════ SECTIONS COMMON ══════ */
+section{padding:110px 5%}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--red);font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:14px}
+.eyebrow::before{content:'';width:28px;height:2px;background:var(--red)}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,52px);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:18px}
+.sec-title em{color:var(--yellow);font-style:italic}
+.sec-desc{font-size:15px;color:var(--muted);line-height:1.9;max-width:560px}
+.red-rule{width:52px;height:3px;background:linear-gradient(90deg,var(--red),var(--yellow));margin:16px 0 24px}
+
+/* Fade anim */
+.fi,.fl,.fr{opacity:0;transition:opacity .7s ease,transform .7s ease}
+.fi{transform:translateY(28px)}.fl{transform:translateX(-28px)}.fr{transform:translateX(28px)}
+.fi.vis,.fl.vis,.fr.vis{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ══════ ABOUT ══════ */
+.about-wrap{background:var(--ash)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.about-img-stack{position:relative;height:520px}
+.ai-main{position:absolute;top:0;left:0;width:68%;height:75%;object-fit:cover;border-radius:4px}
+.ai-sub{position:absolute;bottom:0;right:0;width:56%;height:58%;object-fit:cover;border-radius:4px;border:4px solid var(--ash)}
+.ai-badge{position:absolute;top:50%;left:54%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--yellow2));z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(192,57,43,.45)}
+.ai-badge-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--white);line-height:1}
+.ai-badge-txt{font-size:10px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:1.5px;text-transform:uppercase}
+.about-text p{font-size:15.5px;color:var(--muted);line-height:1.85;margin-bottom:16px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.stat-box{padding:20px;background:var(--ash2);border:1px solid var(--border);border-radius:4px;border-left:3px solid var(--red)}
+.stat-box strong{font-family:'Playfair Display',serif;font-size:36px;color:var(--yellow);font-weight:700;display:block;line-height:1}
+.stat-box span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;display:block}
+
+/* ══════ SERVICES ══════ */
+.services-wrap{background:var(--black)}
+.svc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;flex-wrap:wrap;gap:20px}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.svc-card{background:var(--ash);padding:44px 36px;transition:all .4s;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:linear-gradient(to bottom,var(--red),var(--yellow));transition:height .4s}
+.svc-card:hover{background:var(--ash2)}
+.svc-card:hover::before{height:100%}
+.svc-icon{font-size:36px;color:var(--red);margin-bottom:22px;transition:transform .35s;display:block}
+.svc-card:hover .svc-icon{transform:scale(1.12);color:var(--yellow)}
+.svc-card h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);margin-bottom:10px}
+.svc-card p{font-size:14px;color:var(--muted);line-height:1.8}
+
+/* ══════ PROJECTS ══════ */
+.projects-wrap{background:var(--ash)}
+.proj-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:52px;flex-wrap:wrap;gap:20px}
+#projectsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.proj-card{position:relative;overflow:hidden;cursor:pointer;height:280px}
+.proj-card.big{grid-row:span 2;height:auto}
+.proj-bg{width:100%;height:100%;background-size:cover;background-position:center;transition:transform .6s ease}
+.pj1{background:linear-gradient(135deg,#1a0a0a,#3a1010),url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=70') center/cover}
+.pj2{background:linear-gradient(135deg,#0a0a1a,#10103a),url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=70') center/cover}
+.pj3{background:linear-gradient(135deg,#0a1a0a,#10301a),url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=70') center/cover}
+.pj4{background:linear-gradient(135deg,#1a1a0a,#30300a),url('https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=600&q=70') center/cover}
+.pj5{background:linear-gradient(135deg,#1a0a10,#30101a),url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70') center/cover}
+.proj-card:hover .proj-bg{transform:scale(1.08)}
+.proj-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.95) 0%,rgba(10,10,10,.2) 60%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:28px;transform:translateY(24px);transition:transform .4s}
+.proj-card:hover .proj-overlay{transform:translateY(0)}
+.proj-cat{font-size:10px;letter-spacing:3px;color:var(--yellow);text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.proj-overlay h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);margin-bottom:6px}
+.proj-overlay p{font-size:13px;color:rgba(255,255,255,.5)}
+
+/* ══════ PROCESS ══════ */
+.process-wrap{background:var(--black);position:relative;overflow:hidden}
+.process-wrap::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.06) 0%,transparent 70%)}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:60px}
+.proc-step{background:var(--ash);padding:44px 32px;position:relative;transition:background .3s}
+.proc-step:hover{background:var(--ash2)}
+.proc-num{font-family:'Bebas Neue',sans-serif;font-size:72px;color:rgba(192,57,43,0.12);line-height:1;margin-bottom:12px;transition:color .3s}
+.proc-step:hover .proc-num{color:rgba(192,57,43,0.3)}
+.proc-icon{width:52px;height:52px;background:rgba(192,57,43,0.12);border:1px solid var(--border-r);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--red);margin-bottom:20px}
+.proc-step h4{font-size:17px;font-weight:700;color:var(--white);margin-bottom:10px}
+.proc-step p{font-size:13.5px;color:var(--muted);line-height:1.75}
+
+/* ══════ CTA BAND ══════ */
+.cta-band{background:linear-gradient(110deg,var(--red) 0%,#8e1a0e 50%,#1a0a0a 100%);padding:90px 5%;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;position:relative;overflow:hidden}
+.cta-band::after{content:'';position:absolute;right:-100px;top:50%;transform:translateY(-50%);width:400px;height:400px;border-radius:50%;border:1px solid rgba(255,255,255,0.08)}
+.cta-band h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,52px);color:var(--white);margin-bottom:12px;font-style:italic}
+.cta-band p{color:rgba(255,255,255,.65);font-size:16px;max-width:480px}
+.cta-btns{display:flex;gap:14px;flex-wrap:wrap;position:relative;z-index:1}
+.btn-white{background:var(--white);color:var(--red);padding:16px 36px;border:none;cursor:pointer;font-weight:700;font-size:14px;letter-spacing:.5px;border-radius:3px;display:inline-flex;align-items:center;gap:10px;transition:all .3s;font-family:'DM Sans',sans-serif;text-transform:uppercase}
+.btn-white:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ══════ TESTIMONIALS ══════ */
+.testi-wrap{background:var(--ash)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:56px}
+.testi-card{background:var(--ash2);padding:42px 36px;position:relative}
+.testi-quote{position:absolute;top:20px;right:24px;font-family:'Playfair Display',serif;font-size:90px;color:rgba(192,57,43,0.1);line-height:1}
+.testi-stars{color:var(--yellow);font-size:13px;letter-spacing:2px;margin-bottom:16px}
+.testi-card p{font-size:14.5px;color:var(--muted);line-height:1.85;font-style:italic;margin-bottom:24px}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--yellow));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white)}
+.testi-name{font-weight:700;color:var(--white);font-size:14px}
+.testi-loc{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ══════ CONTACT ══════ */
+.contact-wrap{background:var(--black)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-info .c-item{display:flex;gap:16px;margin-bottom:28px;align-items:flex-start}
+.c-icon{width:44px;height:44px;min-width:44px;background:rgba(192,57,43,.12);border:1px solid var(--border-r);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--red);margin-top:2px}
+.c-item h5{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px}
+.c-item p,.c-item a{font-size:15px;color:var(--white);transition:color .25s}
+.c-item a:hover{color:var(--yellow)}
+.contact-form{background:var(--ash);border:1px solid var(--border);padding:44px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:13px 16px;background:var(--ash2);border:1px solid var(--border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .25s;border-radius:3px}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--red)}
+.form-group textarea{height:110px;resize:vertical}
+.form-group select option{background:var(--ash2)}
+
+/* ══════ FOOTER ══════ */
+footer{background:var(--ash);border-top:1px solid var(--border)}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:50px;padding:70px 5% 50px}
+.f-brand .logo-text{font-size:26px;margin-bottom:4px}
+.f-brand p{font-size:13.5px;color:rgba(255,255,255,.35);line-height:1.8;margin:16px 0 24px;max-width:280px}
+.socials{display:flex;gap:10px}
+.soc{width:36px;height:36px;border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;transition:all .25s}
+.soc:hover{background:var(--red);border-color:var(--red);color:var(--white)}
+.f-col h4{font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:700;color:var(--white);margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.f-col ul li{margin-bottom:10px}
+.f-col ul li a{font-size:13.5px;color:rgba(255,255,255,.4);transition:color .25s}
+.f-col ul li a:hover{color:var(--yellow)}
+.f-col ul li a i{margin-right:6px;font-size:10px;color:var(--red)}
+.f-bottom{padding:20px 5%;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:12.5px;color:rgba(255,255,255,.3)}
+.f-bottom a{color:rgba(255,255,255,.3);transition:color .25s}
+.f-bottom a:hover{color:var(--yellow)}
+.nl-form{display:flex;gap:0;margin-top:12px}
+.nl-form input{flex:1;padding:11px 14px;background:var(--ash2);border:1px solid var(--border);border-right:none;color:var(--white);font-size:13px;outline:none;border-radius:3px 0 0 3px;font-family:'DM Sans',sans-serif}
+.nl-form button{background:var(--red);border:none;color:var(--white);padding:0 16px;cursor:pointer;font-size:14px;border-radius:0 3px 3px 0;transition:background .25s}
+.nl-form button:hover{background:var(--red2)}
+
+/* ══════ FLOAT ══════ */
+.float-hub{position:fixed;bottom:28px;right:28px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.float-items{display:flex;flex-direction:column;gap:8px;align-items:flex-end;opacity:0;pointer-events:none;transform:translateY(12px);transition:all .3s}
+.float-items.on{opacity:1;pointer-events:all;transform:none}
+.fi-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:30px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.fi-call2{background:var(--red);color:var(--white)}
+.fi-wa2{background:#25d366;color:var(--white)}
+.float-tog{width:52px;height:52px;border-radius:50%;background:var(--red);border:none;color:var(--white);font-size:18px;cursor:pointer;box-shadow:var(--shadow-r);transition:all .3s;display:flex;align-items:center;justify-content:center}
+.float-tog.on{transform:rotate(45deg);background:var(--ash)}
+.wa-quick{position:fixed;bottom:28px;left:28px;z-index:900;width:52px;height:52px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--white);box-shadow:0 4px 20px rgba(37,211,102,.35)}
+.btt{position:fixed;bottom:90px;right:28px;z-index:900;width:44px;height:44px;border-radius:3px;background:var(--ash2);border:1px solid var(--border);color:var(--white);font-size:14px;cursor:pointer;opacity:0;pointer-events:none;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.btt.show{opacity:1;pointer-events:all}
+.btt:hover{background:var(--red);border-color:var(--red)}
+
+/* ══════════════════════════════════
+   AUTH OVERLAY / MODAL
+══════════════════════════════════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:3000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px)}
+.overlay.on{opacity:1;pointer-events:all}
+.modal{background:var(--ash);border:1px solid var(--border);max-width:440px;width:90%;border-radius:6px;overflow:hidden;transform:scale(.96);transition:transform .3s}
+.overlay.on .modal{transform:scale(1)}
+.modal-head{background:var(--ash2);padding:28px 32px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-head h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--white)}
+.modal-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;transition:color .25s}
+.modal-close:hover{color:var(--red)}
+.modal-body{padding:36px 32px}
+.modal-logo{text-align:center;margin-bottom:28px}
+.auth-btn{width:100%;padding:14px;border-radius:4px;border:1px solid var(--border);background:var(--ash2);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;transition:all .25s}
+.auth-btn:hover{border-color:var(--red);background:rgba(192,57,43,.1)}
+.auth-btn img{width:20px;height:20px;object-fit:contain}
+.auth-divider{text-align:center;color:var(--muted);font-size:12px;letter-spacing:2px;margin:16px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:38%;height:1px;background:var(--border)}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.phone-row{display:flex;gap:8px}
+.phone-select{padding:12px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;min-width:90px}
+.phone-input{flex:1;padding:12px 14px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif}
+.phone-input:focus{border-color:var(--red)}
+.modal-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6}
+
+/* Phone collection (after Google login) */
+.phone-collect-modal{display:none}
+
+/* ══════════════════════════════════
+   ADMIN PORTAL
+══════════════════════════════════ */
+#adminLink{display:none;color:rgba(255,255,255,.5);font-size:12px;padding:6px 12px;border:1px solid var(--border);border-radius:3px;transition:all .25s;letter-spacing:.5px}
+#adminLink:hover{border-color:var(--red);color:var(--red)}
+
+.admin-wrap{display:none;position:fixed;inset:0;z-index:4000;background:var(--black);flex-direction:column}
+.admin-wrap.on{display:flex}
+.admin-topbar{background:var(--ash);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.admin-topbar .logo-text{font-size:18px}
+.admin-topbar-r{display:flex;align-items:center;gap:12px}
+.admin-body{display:flex;flex:1;overflow:hidden}
+.admin-sidebar{width:240px;min-width:240px;background:var(--ash);border-right:1px solid var(--border);padding:24px 0;overflow-y:auto}
+.admin-nav-item{display:flex;align-items:center;gap:10px;padding:13px 24px;color:rgba(255,255,255,.5);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .25s;border-left:3px solid transparent}
+.admin-nav-item:hover{color:var(--white);background:rgba(255,255,255,.04)}
+.admin-nav-item.active{color:var(--yellow);border-left-color:var(--red);background:rgba(192,57,43,.08)}
+.admin-nav-item i{font-size:15px;width:18px;text-align:center}
+.admin-content{flex:1;overflow-y:auto;padding:32px}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+.panel-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--white);margin-bottom:6px}
+.panel-sub{font-size:13.5px;color:var(--muted);margin-bottom:32px}
+.admin-card{background:var(--ash);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:24px}
+.admin-card-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--ash2)}
+.admin-card-head h4{font-size:14px;font-weight:600;color:var(--white);letter-spacing:.5px}
+.admin-card-body{padding:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--ash);border:1px solid var(--border);padding:22px;border-radius:4px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--red),var(--yellow))}
+.stat-card .val{font-family:'Playfair Display',serif;font-size:32px;color:var(--white);font-weight:700;line-height:1;margin-bottom:4px}
+.stat-card .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.stat-card i{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:28px;color:rgba(192,57,43,0.15)}
+
+/* Project upload form */
+.upload-zone{border:2px dashed var(--border);border-radius:4px;padding:40px;text-align:center;cursor:pointer;transition:border-color .25s;background:var(--ash2)}
+.upload-zone:hover{border-color:var(--red)}
+.upload-zone i{font-size:36px;color:var(--muted);margin-bottom:12px;display:block}
+.upload-zone p{font-size:14px;color:var(--muted)}
+.a-form-group{margin-bottom:16px}
+.a-form-group label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px}
+.a-form-group input,.a-form-group textarea,.a-form-group select{width:100%;padding:12px 14px;background:var(--ash2);border:1px solid var(--border);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .25s;border-radius:3px}
+.a-form-group input:focus,.a-form-group textarea:focus{border-color:var(--red)}
+.a-form-group textarea{height:100px;resize:vertical}
+.btn-admin{padding:11px 24px;border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.5px}
+.btn-red{background:var(--red);color:var(--white)}
+.btn-red:hover{background:var(--red2)}
+.btn-ash{background:var(--ash2);color:var(--white);border:1px solid var(--border)}
+.btn-ash:hover{background:var(--ash3)}
+.btn-yellow{background:var(--yellow2);color:var(--black)}
+.btn-yellow:hover{background:var(--yellow)}
+
+/* project table */
+.proj-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.proj-table th{padding:12px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:600}
+.proj-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.7);vertical-align:middle}
+.proj-table tr:hover td{background:rgba(255,255,255,.02)}
+.proj-thumb{width:48px;height:36px;object-fit:cover;border-radius:3px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-green{background:rgba(46,213,115,.12);color:#2ed573;border:1px solid rgba(46,213,115,.2)}
+.badge-yellow{background:rgba(241,196,15,.12);color:var(--yellow);border:1px solid rgba(241,196,15,.2)}
+
+/* Users table */
+.user-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.user-table th{padding:12px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);border-bottom:1px solid var(--border)}
+.user-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:rgba(255,255,255,.7)}
+
+/* Admin login */
+.admin-login{display:flex;align-items:center;justify-content:center;height:100%;background:var(--black)}
+.admin-login-box{background:var(--ash);border:1px solid var(--border);padding:48px;max-width:380px;width:90%;border-radius:6px}
+.admin-login-box h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--white);margin-bottom:6px}
+.admin-login-box p{font-size:13px;color:var(--muted);margin-bottom:32px}
+.admin-error{background:rgba(192,57,43,.12);border:1px solid var(--border-r);color:#e74c3c;padding:10px 14px;border-radius:3px;font-size:13px;margin-bottom:16px;display:none}
+
+/* Notification toast */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ash2);border:1px solid var(--border);color:var(--white);padding:12px 24px;border-radius:30px;font-size:13.5px;z-index:9999;opacity:0;transition:all .35s;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Responsive */
+@media(max-width:960px){
+  .hero h1{font-size:clamp(50px,12vw,90px)}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
+  .about-img-stack{height:360px}
+  .svc-grid{grid-template-columns:1fr 1fr}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .admin-sidebar{width:60px;min-width:60px}
+  .admin-nav-item span{display:none}
+  .admin-nav-item{padding:16px;justify-content:center}
+  .admin-nav-item i{width:auto;font-size:18px}
+}
+@media(max-width:640px){
+  .nav-menu{display:none}
+  .hamburger{display:flex}
+  .hero-stats{grid-template-columns:1fr 1fr;font-size:12px}
+  .svc-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr}
+  #projectsGrid{grid-template-columns:1fr 1fr}
+  .proj-card.big{grid-row:span 1;height:280px}
+  .footer-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .cta-btns{flex-direction:column}
+}
+
+/* Image in hero more natural */
+.hero-img-overlay{
+  position:absolute;right:0;bottom:80px;z-index:2;
+  width:42%;max-width:580px;
+  -webkit-mask-image:linear-gradient(to left,black 55%,transparent 100%);
+  mask-image:linear-gradient(to left,black 55%,transparent 100%);
+  pointer-events:none;
+  animation:fadeUp .9s .6s both;
+}
+@media(max-width:960px){.hero-img-overlay{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ══════ SCROLL BAR ══════ -->
+<div id="scrollBar"></div>
+
+<!-- ══════ TOPBAR ══════ -->
+<div class="topbar">
+  <div class="topbar-l">
+    <a href="tel:+917373720302"><i class="fas fa-phone"></i>73737 20302</a>
+    <a href="/cdn-cgi/l/email-protection#e58c8b838aa58f8793808b919097808497868d8c9180869196cb868a88"><i class="fas fa-envelope"></i><span class="__cf_email__" data-cfemail="254c4b434a654f4753404b515057404457464d4c51404651560b464a48">[email&#160;protected]</span></a>
+  </div>
+  <div class="topbar-r">
+    <span><i class="fas fa-map-marker-alt"></i>Thoothukudi, Tamil Nadu</span>
+    <span><i class="fas fa-clock"></i>Mon–Sat: 9AM–7PM</span>
+    <!-- admin link moved to navbar -->
+  </div>
+</div>
+
+<!-- ══════ NAV ══════ -->
+<nav id="nav">
+  <a href="#home" class="logo-wrap">
+    <!-- Venture Logo SVG inline -->
+    <div class="logo-symbol">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,8 92,50 50,92 8,50" fill="none" stroke="#c0392b" stroke-width="9"/>
+        <polygon points="50,20 80,50 50,80 20,50" fill="none" stroke="#1a1a1a" stroke-width="9"/>
+        <rect x="44" y="10" width="12" height="38" fill="#c0392b" rx="1"/>
+        <rect x="47" y="10" width="6" height="20" fill="#f1c40f" rx="1"/>
+        <polygon points="44,10 56,10 62,48 38,48" fill="#1a1a1a"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">JB <em>Venture</em></div>
+      <div class="logo-sub">Construction &amp; Architects</div>
+    </div>
+  </a>
+  <div class="nav-menu">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#projects">Projects</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+    <a href="#contact" class="nav-cta">Get Quote</a>
+  </div>
+  <div class="nav-user" style="display:flex;align-items:center;gap:10px">
+    <a href="#" id="adminNavBtn" onclick="showAdminPortal(event)"
+       style="display:inline-flex;align-items:center;gap:6px;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.35);color:var(--red);padding:8px 14px;border-radius:3px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .25s;cursor:pointer"
+       onmouseover="this.style.background='var(--red)';this.style.color='white'"
+       onmouseout="this.style.background='rgba(192,57,43,0.12)';this.style.color='var(--red)'">
+      <i class="fas fa-shield-alt"></i> Admin
+    </a>
+    <div id="navUserArea">
+      <button class="btn-login" onclick="openLogin()"><i class="fas fa-user"></i> Sign In</button>
+    </div>
+  </div>
+  <button class="hamburger" onclick="mNavToggle()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══════ MOBILE NAV ══════ -->
+<div class="m-nav" id="mNav">
+  <button class="m-nav-x" onclick="mNavToggle()"><i class="fas fa-times"></i></button>
+  <a href="#home" onclick="mNavToggle()">Home</a>
+  <a href="#about" onclick="mNavToggle()">About</a>
+  <a href="#services" onclick="mNavToggle()">Services</a>
+  <a href="#projects" onclick="mNavToggle()">Projects</a>
+  <a href="#process" onclick="mNavToggle()">Process</a>
+  <a href="#contact" onclick="mNavToggle()">Contact</a>
+</div>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+
+  <!-- Family + building image on right -->
+  <img class="hero-img-overlay"
+    src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80"
+    alt="Family with dream home"
+    onerror="this.style.display='none'"
+  >
+
+  <div class="hero-body">
+    <div class="hero-tag">JB Venture — Est. 2013</div>
+    <h1>BUILD YOUR<br><em>DREAM</em><br><span class="outline">HOME</span></h1>
+    <p class="hero-desc">Thoothukudi's most trusted construction & architecture firm. Delivering excellence across 21+ active sites with 300+ skilled professionals.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary"><i class="fas fa-hard-hat"></i>Start Your Project</a>
+      <a href="#projects" class="btn-outline"><i class="fas fa-images"></i>View Projects</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat fi">
+      <div class="hstat-icon"><i class="fas fa-home"></i></div>
+      <div>
+        <div class="hstat-num" data-t="500">0</div>
+        <div class="hstat-lbl">Homes Built</div>
+      </div>
+    </div>
+    <div class="hstat fi d1">
+      <div class="hstat-icon"><i class="fas fa-users"></i></div>
+      <div>
+        <div class="hstat-num" data-t="300">0</div>
+        <div class="hstat-lbl">Professionals</div>
+      </div>
+    </div>
+    <div class="hstat fi d2">
+      <div class="hstat-icon"><i class="fas fa-hard-hat"></i></div>
+      <div>
+        <div class="hstat-num" data-t="21">0</div>
+        <div class="hstat-lbl">Active Sites</div>
+      </div>
+    </div>
+    <div class="hstat fi d3">
+      <div class="hstat-icon"><i class="fas fa-calendar-check"></i></div>
+      <div>
+        <div class="hstat-num" data-t="10">0</div>
+        <div class="hstat-lbl">Years Experience</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ ABOUT ══════ -->
+<section class="about-wrap" id="about">
+  <div class="about-grid">
+    <div class="about-img-stack fl">
+      <img class="ai-main" src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=700&q=75" alt="Construction site" onerror="this.src='https://via.placeholder.com/500x400/1a1a1a/c0392b?text=JB+Venture'">
+      <img class="ai-sub" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=500&q=75" alt="Architecture" onerror="this.style.display='none'">
+      <div class="ai-badge">
+        <div class="ai-badge-num">10+</div>
+        <div class="ai-badge-txt">Years</div>
+      </div>
+    </div>
+    <div class="about-text fr">
+      <div class="eyebrow">About JB Venture</div>
+      <h2 class="sec-title">Building <em>Dreams</em> Into Reality</h2>
+      <div class="red-rule"></div>
+      <p>Founded in Thoothukudi, JB Venture has grown to become the region's most trusted construction and architecture firm. With a passionate team of engineers, architects, and craftsmen, we deliver homes and commercial spaces that stand the test of time.</p>
+      <p>From blueprint to handover, we are committed to quality, transparency, and timely delivery. Every project is a promise fulfilled.</p>
+      <div class="stat-row">
+        <div class="stat-box"><strong>500+</strong><span>Projects Completed</span></div>
+        <div class="stat-box"><strong>300+</strong><span>Expert Team</span></div>
+        <div class="stat-box"><strong>21+</strong><span>Active Sites</span></div>
+        <div class="stat-box"><strong>10+</strong><span>Cities Served</span></div>
+      </div>
+      <div style="margin-top:32px">
+        <a href="#contact" class="btn-primary" style="display:inline-flex"><i class="fas fa-phone"></i>Talk to Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ SERVICES ══════ -->
+<section class="services-wrap" id="services">
+  <div class="svc-header">
+    <div>
+      <div class="eyebrow">What We Do</div>
+      <h2 class="sec-title">Our <em>Services</em></h2>
+    </div>
+    <p class="sec-desc" style="max-width:360px">End-to-end solutions for every construction and design need.</p>
+  </div>
+  <div class="svc-grid fi">
+    <div class="svc-card">
+      <i class="fas fa-building svc-icon"></i>
+      <h3>Construction</h3>
+      <p>Residential, commercial & industrial construction with the highest quality materials and craftsmanship.</p>
+    </div>
+    <div class="svc-card">
+      <i class="fas fa-drafting-compass svc-icon"></i>
+      <h3>Architecture</h3>
+      <p>Innovative architectural design that blends aesthetics with functionality for modern living.</p>
+    </div>
+    <div class="svc-card">
+      <i class="fas fa-couch svc-icon"></i>
+      <h3>Interior Design</h3>
+      <p>Curated interiors that reflect your personality — from concept to installation.</p>
+    </div>
+    <div class="svc-card">
+      <i class="fas fa-tools svc-icon"></i>
+      <h3>Renovation</h3>
+      <p>Transform your existing space with expert renovation and refurbishment services.</p>
+    </div>
+    <div class="svc-card">
+      <i class="fas fa-layer-group svc-icon"></i>
+      <h3>Project Development</h3>
+      <p>Full project lifecycle management from land acquisition to handover.</p>
+    </div>
+    <div class="svc-card">
+      <i class="fas fa-fire svc-icon"></i>
+      <h3>Welding & Laser</h3>
+      <p>Precision welding and laser fabrication for custom structural and decorative work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ REALTIME PROJECTS ══════ -->
+<section class="projects-wrap" id="projects">
+  <div class="proj-header">
+    <div>
+      <div class="eyebrow">Portfolio</div>
+      <h2 class="sec-title">Realtime <em>Projects</em></h2>
+    </div>
+    <a href="#contact" class="btn-outline">View All <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div id="projectsGrid">
+    <!-- Default projects — will be replaced by Firebase data -->
+    <div class="proj-card big fi">
+      <div class="proj-bg pj1"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">Residential</div>
+        <h3>Modern Villa, Thoothukudi</h3>
+        <p>4BHK duplex with rooftop garden</p>
+      </div>
+    </div>
+    <div class="proj-card fi d1">
+      <div class="proj-bg pj2"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">Commercial</div>
+        <h3>Office Complex</h3>
+        <p>2,400 sq ft premium workspace</p>
+      </div>
+    </div>
+    <div class="proj-card fi d2">
+      <div class="proj-bg pj3"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">Architecture</div>
+        <h3>Heritage Bungalow Restoration</h3>
+        <p>Colonial-era restoration project</p>
+      </div>
+    </div>
+    <div class="proj-card fi d3">
+      <div class="proj-bg pj4"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">Industrial</div>
+        <h3>Factory Complex</h3>
+        <p>12,000 sq ft manufacturing unit</p>
+      </div>
+    </div>
+    <div class="proj-card fi d4">
+      <div class="proj-bg pj5"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">Interior</div>
+        <h3>Luxury Penthouse</h3>
+        <p>Full interior design & execution</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ PROCESS ══════ -->
+<section class="process-wrap" id="process">
+  <div style="text-align:center;max-width:600px;margin:0 auto 0">
+    <div class="eyebrow" style="justify-content:center">How We Work</div>
+    <h2 class="sec-title">Our <em>Process</em></h2>
+    <p class="sec-desc" style="margin:0 auto">A streamlined, transparent process from your first call to key handover.</p>
+  </div>
+  <div class="process-grid fi">
+    <div class="proc-step">
+      <div class="proc-num">01</div>
+      <div class="proc-icon"><i class="fas fa-phone-alt"></i></div>
+      <h4>Consultation</h4>
+      <p>Free consultation to understand your vision, budget, and timeline requirements.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">02</div>
+      <div class="proc-icon"><i class="fas fa-pencil-ruler"></i></div>
+      <h4>Design & Plan</h4>
+      <p>Our architects create detailed plans, 3D renders, and accurate cost estimates.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">03</div>
+      <div class="proc-icon"><i class="fas fa-hammer"></i></div>
+      <h4>Construction</h4>
+      <p>Expert execution with real-time progress updates and strict quality checks.</p>
+    </div>
+    <div class="proc-step">
+      <div class="proc-num">04</div>
+      <div class="proc-icon"><i class="fas fa-key"></i></div>
+      <h4>Handover</h4>
+      <p>Final walkthrough, documentation, and keys — your dream home delivered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CTA BAND ══════ -->
+<div class="cta-band fi">
+  <div>
+    <h2>Ready to Build Your Dream Home?</h2>
+    <p>Get a free consultation and estimate from Tamil Nadu's most trusted builders.</p>
+  </div>
+  <div class="cta-btns">
+    <a href="tel:+917373720302" class="btn-white"><i class="fas fa-phone"></i>Call Now</a>
+    <a href="https://wa.me/917373720302" target="_blank" class="btn-outline" style="padding:15px 36px"><i class="fab fa-whatsapp"></i>WhatsApp</a>
+  </div>
+</div>
+
+<!-- ══════ TESTIMONIALS ══════ -->
+<section class="testi-wrap" id="testimonials">
+  <div class="eyebrow">Client Stories</div>
+  <h2 class="sec-title">What Our <em>Clients Say</em></h2>
+  <div class="red-rule"></div>
+  <div class="testi-grid fi">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <p>"JB Venture exceeded every expectation. From design to handover, the professionalism was exceptional. Our villa is everything we dreamed of."</p>
+      <div class="testi-author">
+        <div class="testi-av">R</div>
+        <div><div class="testi-name">Rajesh Kumar</div><div class="testi-loc">Thoothukudi</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <p>"The team completed our commercial complex on time and within budget. Their quality control is unmatched in the region."</p>
+      <div class="testi-author">
+        <div class="testi-av">P</div>
+        <div><div class="testi-name">Priya Sundar</div><div class="testi-loc">Chennai</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <div class="testi-stars">★★★★★</div>
+      <p>"Best decision we ever made — transparent pricing, skilled workers, and stunning results. Highly recommend JB Venture to everyone."</p>
+      <div class="testi-author">
+        <div class="testi-av">M</div>
+        <div><div class="testi-name">Murugan Selvam</div><div class="testi-loc">Tirunelveli</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CONTACT ══════ -->
+<section class="contact-wrap" id="contact">
+  <div class="contact-grid">
+    <div class="contact-info fl">
+      <div class="eyebrow">Get In Touch</div>
+      <h2 class="sec-title">Let's Build <em>Together</em></h2>
+      <div class="red-rule"></div>
+      <div class="c-item">
+        <div class="c-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div><h5>Address</h5><p>99 C, Ettayapuram Rd, Polpettai East, Thoothukudi, Tamil Nadu 628002</p></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon"><i class="fas fa-phone"></i></div>
+        <div><h5>Phone</h5><a href="tel:+917373720302">73737 20302</a></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon"><i class="fab fa-whatsapp"></i></div>
+        <div><h5>WhatsApp</h5><a href="https://wa.me/917373720302" target="_blank">Chat with Us</a></div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon"><i class="fas fa-clock"></i></div>
+        <div><h5>Hours</h5><p>Mon–Fri: 9AM–7PM &nbsp;|&nbsp; Sat: 9AM–5PM</p></div>
+      </div>
+    </div>
+    <div class="contact-form fr">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name"/></div>
+        <div class="form-group"><label>Phone</label><input type="tel" placeholder="+91 00000 00000"/></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com"/></div>
+      <div class="form-group">
+        <label>Service Needed</label>
+        <select><option>Select service...</option><option>Residential Construction</option><option>Commercial Construction</option><option>Architecture Design</option><option>Interior Design</option><option>Renovation</option><option>Consultation</option></select>
+      </div>
+      <div class="form-group"><label>Message</label><textarea placeholder="Describe your project..."></textarea></div>
+      <button class="btn-primary" style="width:100%;justify-content:center" onclick="submitContact(this)"><i class="fas fa-paper-plane"></i>Send Message</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="f-brand">
+      <div class="logo-text">JB <em>Venture</em></div>
+      <div class="logo-sub" style="color:rgba(255,255,255,.3);margin-top:4px;letter-spacing:3px;font-size:9px">Construction &amp; Architects</div>
+      <p>Building dreams into reality since 2013. Thoothukudi's most trusted name in construction and architecture.</p>
+      <div class="socials">
+        <a href="#" class="soc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="soc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="soc"><i class="fab fa-youtube"></i></a>
+        <a href="https://wa.me/917373720302" target="_blank" class="soc"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" class="soc"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home"><i class="fas fa-chevron-right"></i>Home</a></li>
+        <li><a href="#about"><i class="fas fa-chevron-right"></i>About Us</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Services</a></li>
+        <li><a href="#projects"><i class="fas fa-chevron-right"></i>Projects</a></li>
+        <li><a href="#contact"><i class="fas fa-chevron-right"></i>Contact</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Construction</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Architecture</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Interior Design</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Renovation</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Project Dev</a></li>
+        <li><a href="#services"><i class="fas fa-chevron-right"></i>Welding &amp; Laser</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h4>Contact</h4>
+      <div class="c-item" style="margin-bottom:12px;align-items:flex-start"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:10px;margin-top:3px"></i><span style="font-size:13px;color:rgba(255,255,255,.4)">99 C, Ettayapuram Rd, Thoothukudi</span></div>
+      <div class="c-item" style="margin-bottom:12px"><i class="fas fa-phone" style="color:var(--red);margin-right:10px"></i><a href="tel:+917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">73737 20302</a></div>
+      <div class="c-item" style="margin-bottom:20px"><i class="fab fa-whatsapp" style="color:var(--red);margin-right:10px"></i><a href="https://wa.me/917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">WhatsApp Chat</a></div>
+      <h4>Newsletter</h4>
+      <p style="color:rgba(255,255,255,.3);font-size:12px;margin-bottom:8px">Stay updated with our projects</p>
+      <div class="nl-form">
+        <input type="email" placeholder="Your email"/>
+        <button onclick="nlSub(this)"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+  <div class="f-bottom">
+    <span>© 2025 JB Venture | Constructions &amp; Architects. All rights reserved.</span>
+    <div style="display:flex;gap:20px">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="https://www.jbventurearchitects.com" target="_blank">jbventurearchitects.com</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════ FLOAT HUB ══════ -->
+<div class="float-hub">
+  <div class="float-items" id="floatItems">
+    <a href="tel:+917373720302" class="fi-btn fi-call2"><i class="fas fa-phone-alt"></i>73737 20302</a>
+    <a href="https://wa.me/917373720302" target="_blank" class="fi-btn fi-wa2"><i class="fab fa-whatsapp"></i>WhatsApp</a>
+  </div>
+  <button class="float-tog" id="fTog" onclick="togFloat()"><i class="fas fa-plus"></i></button>
+</div>
+<a class="wa-quick" href="https://wa.me/917373720302?text=Hi JB Venture!" target="_blank"><i class="fab fa-whatsapp"></i></a>
+<button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+<!-- ══════ AUTH OVERLAY ══════ -->
+<div class="overlay" id="authOverlay">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2>Welcome to JB Venture</h2>
+      <button class="modal-close" onclick="closeLogin()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-logo" style="text-align:center;margin-bottom:24px">
+        <div class="logo-text" style="font-size:22px;text-align:center">JB <em>Venture</em></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Sign in to continue</div>
+      </div>
+
+      <!-- Phone Number Field -->
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px">
+          Phone Number <span style="color:var(--red)">*</span>
+        </label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="loginCountry" style="padding:12px 10px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;min-width:110px">
+            <option value="+91">🇮🇳 +91</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+971">🇦🇪 +971</option>
+            <option value="+65">🇸🇬 +65</option>
+          </select>
+          <div style="flex:1;position:relative">
+            <input type="tel" id="loginPhone" placeholder="Enter phone number"
+              style="width:100%;padding:12px 40px 12px 14px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .25s"
+              oninput="validatePhone(this)"
+              onfocus="this.style.borderColor='var(--red)'"
+              onblur="this.style.borderColor=this.value.length>=8?'#2ed573':'var(--border)'"
+            />
+            <!-- Green tick appears when phone valid -->
+            <span id="phoneTick" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:18px;color:#2ed573;display:none">✓</span>
+          </div>
+        </div>
+        <div id="phoneHint" style="font-size:11px;color:var(--muted);margin-top:6px">Enter your phone number to continue</div>
+      </div>
+
+      <!-- Error box -->
+      <div id="authModalError" style="display:none;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:12px;line-height:1.6;text-align:center"></div>
+
+      <!-- Google Button -->
+      <button class="auth-btn" id="googleSignInBtn" onclick="signInGoogle()" style="position:relative">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px">
+        <span id="googleBtnText">Continue with Google</span>
+        <span id="googleBtnSpinner" style="display:none"><i class="fas fa-spinner fa-spin"></i></span>
+      </button>
+
+      <!-- Success state (hidden until login) -->
+      <div id="loginSuccess" style="display:none;text-align:center;padding:20px 0">
+        <div style="width:60px;height:60px;background:rgba(46,213,115,0.15);border:2px solid #2ed573;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;color:#2ed573">✓</div>
+        <div style="font-size:16px;font-weight:700;color:var(--white)" id="successName">Signed in!</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px" id="successEmail"></div>
+        <button onclick="closeLogin()" class="btn-primary" style="margin-top:16px;width:100%;justify-content:center">Continue to Website →</button>
+      </div>
+
+      <p class="modal-note" style="margin-top:12px">By signing in, you agree to our Terms of Service. Your data is safe and secure.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Phone overlay removed - phone collected inside login modal -->
+
+<!-- ══════ ADMIN PORTAL ══════ -->
+<div class="admin-wrap" id="adminPortal">
+  <!-- Admin Login -->
+  <div class="admin-login" id="adminLoginScreen" style="display:flex">
+    <div class="admin-login-box">
+      <div class="logo-text" style="font-size:22px;margin-bottom:6px">JB <em>Venture</em></div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px">Admin Portal</div>
+      <h2>Sign In</h2>
+      <p>Enter admin credentials to access the portal</p>
+      <div class="admin-error" id="adminError">Invalid username or password.</div>
+      <div class="a-form-group" style="margin-top:8px">
+        <label>Username</label>
+        <input type="text" id="adminUser" placeholder="admin"/>
+      </div>
+      <div class="a-form-group">
+        <label>Password</label>
+        <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()"/>
+      </div>
+      <button class="btn-red btn-admin" style="width:100%;justify-content:center;margin-top:8px" onclick="adminLogin()">
+        <i class="fas fa-lock"></i> Login to Admin
+      </button>
+      <div style="text-align:center;margin-top:20px">
+        <button onclick="hideAdminPortal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px">← Back to Website</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard (hidden until login) -->
+  <div id="adminDashboard" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="logo-text" style="font-size:18px">JB <em>Venture</em></div>
+        <span style="font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase">Admin Portal</span>
+      </div>
+      <div class="admin-topbar-r">
+        <div style="font-size:13px;color:rgba(255,255,255,.5)">Welcome, <strong style="color:var(--yellow)">Admin</strong></div>
+        <button class="btn-ash btn-admin" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i><span> Logout</span></button>
+        <button class="btn-ash btn-admin" onclick="hideAdminPortal()"><i class="fas fa-globe"></i><span> View Site</span></button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="admin-nav-item active" onclick="showPanel('dashboard',this)"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></div>
+        <div class="admin-nav-item" onclick="showPanel('projects',this)"><i class="fas fa-hard-hat"></i><span>Realtime Projects</span></div>
+        <div class="admin-nav-item" onclick="showPanel('users',this)"><i class="fas fa-users"></i><span>Visitors</span></div>
+        <div class="admin-nav-item" onclick="showPanel('messages',this)"><i class="fas fa-envelope"></i><span>Messages</span></div>
+        <div class="admin-nav-item" onclick="showPanel('settings',this)"><i class="fas fa-cog"></i><span>Settings</span></div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="admin-content">
+
+        <!-- Dashboard -->
+        <div class="admin-panel active" id="panel-dashboard">
+          <div class="panel-title">Dashboard</div>
+          <div class="panel-sub">Overview of JB Venture website performance</div>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="val" id="dashProjects">0</div><div class="lbl">Total Projects</div><i class="fas fa-hard-hat"></i></div>
+            <div class="stat-card"><div class="val" id="dashUsers">0</div><div class="lbl">Registered Users</div><i class="fas fa-users"></i></div>
+            <div class="stat-card"><div class="val" id="dashMessages">0</div><div class="lbl">Messages</div><i class="fas fa-envelope"></i></div>
+            <div class="stat-card"><div class="val">21+</div><div class="lbl">Active Sites</div><i class="fas fa-map-marker-alt"></i></div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head"><h4>Recent Activity</h4></div>
+            <div class="admin-card-body" id="recentActivity" style="font-size:13.5px;color:var(--muted);line-height:2">
+              Loading activity...
+            </div>
+          </div>
+        </div>
+
+        <!-- Projects Panel -->
+        <div class="admin-panel" id="panel-projects">
+          <div class="panel-title">Realtime Projects</div>
+          <div class="panel-sub">Manage projects displayed on the website — changes appear live</div>
+
+          <div class="admin-card" style="margin-bottom:24px">
+            <div class="admin-card-head"><h4>Add New Project</h4></div>
+            <div class="admin-card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="a-form-group">
+                  <label>Project Title</label>
+                  <input type="text" id="projTitle" placeholder="e.g. Modern Villa"/>
+                </div>
+                <div class="a-form-group">
+                  <label>Category</label>
+                  <select id="projCategory" style="width:100%;padding:12px;background:var(--ash2);border:1px solid var(--border);color:var(--white);border-radius:3px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none">
+                    <option>Residential</option>
+                    <option>Commercial</option>
+                    <option>Architecture</option>
+                    <option>Interior</option>
+                    <option>Industrial</option>
+                    <option>Renovation</option>
+                  </select>
+                </div>
+              </div>
+              <div class="a-form-group">
+                <label>Description</label>
+                <textarea id="projDesc" placeholder="Brief project description..."></textarea>
+              </div>
+              <div class="a-form-group">
+                <label>Image URL (or upload below)</label>
+                <input type="url" id="projImgUrl" placeholder="https://... or upload file"/>
+              </div>
+              <div class="upload-zone" id="uploadZone" onclick="document.getElementById('projFile').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload project image (JPG, PNG, WebP)</p>
+                <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,.3)">Max size: 5MB</p>
+              </div>
+              <input type="file" id="projFile" accept="image/*" style="display:none" onchange="handleFileUpload(this)"/>
+              <div id="uploadPreview" style="margin-top:12px;display:none">
+                <img id="previewImg" style="max-height:120px;border-radius:4px;border:1px solid var(--border)"/>
+                <span id="previewName" style="font-size:12px;color:var(--muted);margin-left:10px;vertical-align:middle"></span>
+              </div>
+              <div style="display:flex;gap:12px;margin-top:16px">
+                <button class="btn-red btn-admin" onclick="addProject()"><i class="fas fa-plus"></i>Add Project</button>
+                <button class="btn-ash btn-admin" onclick="clearProjectForm()"><i class="fas fa-times"></i>Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <h4>All Projects</h4>
+              <button class="btn-ash btn-admin" style="padding:7px 14px;font-size:12px" onclick="loadProjects()"><i class="fas fa-sync"></i> Refresh</button>
+            </div>
+            <div class="admin-card-body" style="padding:0">
+              <table class="proj-table">
+                <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Description</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="projectsTableBody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects yet. Add your first project above.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Panel -->
+        <div class="admin-panel" id="panel-users">
+          <div class="panel-title">Registered Visitors</div>
+          <div class="panel-sub">Users who signed in to the website via Google or Microsoft</div>
+          <div class="admin-card">
+            <div class="admin-card-head"><h4>All Users</h4><button class="btn-ash btn-admin" style="padding:7px 14px;font-size:12px" onclick="loadUsers()"><i class="fas fa-sync"></i> Refresh</button></div>
+            <div class="admin-card-body" style="padding:0">
+              <table class="user-table">
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Country</th><th>Provider</th><th>Joined</th></tr></thead>
+                <tbody id="usersTableBody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Loading users...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages Panel -->
+        <div class="admin-panel" id="panel-messages">
+          <div class="panel-title">Contact Messages</div>
+          <div class="panel-sub">Messages submitted through the contact form</div>
+          <div class="admin-card">
+            <div class="admin-card-head"><h4>All Messages</h4><button class="btn-ash btn-admin" style="padding:7px 14px;font-size:12px" onclick="loadMessages()"><i class="fas fa-sync"></i> Refresh</button></div>
+            <div class="admin-card-body" id="messagesBody" style="font-size:13.5px;color:var(--muted)">Loading messages...</div>
+          </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="admin-panel" id="panel-settings">
+          <div class="panel-title">Settings</div>
+          <div class="panel-sub">Admin credentials and website configuration</div>
+          <div class="admin-card">
+            <div class="admin-card-head"><h4>Admin Credentials</h4></div>
+            <div class="admin-card-body">
+              <p style="color:var(--muted);font-size:13.5px;margin-bottom:20px">Default credentials: <strong style="color:var(--yellow)">admin</strong> / <strong style="color:var(--yellow)">jbventure2025</strong></p>
+              <div class="a-form-group"><label>Current Password</label><input type="password" id="currPass" placeholder="Current password"/></div>
+              <div class="a-form-group"><label>New Password</label><input type="password" id="newPass" placeholder="New password"/></div>
+              <button class="btn-red btn-admin" onclick="changePassword()"><i class="fas fa-key"></i>Update Password</button>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-head"><h4>Firebase Configuration</h4></div>
+            <div class="admin-card-body">
+              <p style="color:var(--muted);font-size:13.5px;line-height:1.8">To enable Firebase features (real-time projects, user management, message storage), update the <code style="background:var(--ash2);padding:2px 6px;border-radius:2px;color:var(--yellow)">firebaseConfig</code> object at the top of this HTML file with your Firebase project credentials.</p>
+              <p style="color:var(--muted);font-size:13px;margin-top:12px">Go to <a href="https://console.firebase.google.com" target="_blank" style="color:var(--red)">console.firebase.google.com</a> → Create project → Add Web App → Copy config.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /admin-content -->
+    </div><!-- /admin-body -->
+  </div><!-- /adminDashboard -->
+</div><!-- /admin-wrap -->
+
+<!-- ══════ TOAST ══════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════ JAVASCRIPT ══════ */-->
+<script>
+/* ═══════════════════════════════════════
+   JB VENTURE — COMPLETE JS
+═══════════════════════════════════════ */
+
+/* ─── ADMIN CREDENTIALS ─── */
+const ADMIN_USER = 'admin';
+let adminPassCurrent = 'jbventure2025';
+let adminLoggedIn = false;
+
+/* ─── STATE ─── */
+let currentUser = null;
+let localProjects = [
+  {id:'p1',title:'Modern Villa, Thoothukudi',category:'Residential',desc:'4BHK duplex with rooftop garden',img:'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=70',status:'Active'},
+  {id:'p2',title:'Office Complex',category:'Commercial',desc:'2,400 sq ft premium workspace',img:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=70',status:'Active'},
+  {id:'p3',title:'Heritage Bungalow Restoration',category:'Architecture',desc:'Colonial-era restoration project',img:'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=70',status:'Completed'},
+  {id:'p4',title:'Factory Complex',category:'Industrial',desc:'12,000 sq ft manufacturing unit',img:'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=600&q=70',status:'Active'},
+  {id:'p5',title:'Luxury Penthouse',category:'Interior',desc:'Full interior design & execution',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=70',status:'Active'},
+];
+let localUsers = [];
+let localMessages = [];
+let uploadedFileData = null;
+
+/* ─── FIREBASE ─── */
+function getFirebase(){ return window._fb || null; }
+
+window.addEventListener('load', () => {
+  const fb = getFirebase();
+  if(fb){
+    fb.onAuthStateChanged(fb.auth, user => {
+      if(user){
+        currentUser = user;
+        updateNavUser(user);
+        saveUserToFirestore(user);
+      } else {
+        currentUser = null;
+        updateNavUser(null);
+      }
+    });
+    loadProjectsFromFirebase();
+  }
+  runAnim();
+  loadProjectsToSite();
+});
+
+/* ─── NAV USER ─── */
+function updateNavUser(user){
+  const area = document.getElementById('navUserArea');
+  if(user){
+    const avatar = user.photoURL
+      ? `<img src="${user.photoURL}" style="width:30px;height:30px;border-radius:50%;object-fit:cover"/>`
+      : `<span style="font-size:13px;font-weight:700">${(user.displayName||'U').charAt(0)}</span>`;
+    area.innerHTML = `
+      <div class="user-pill" onclick="showUserMenu()">
+        <div class="user-av">${avatar}</div>
+        <div class="user-name">${user.displayName||user.email||'User'}</div>
+        <i class="fas fa-chevron-down" style="font-size:10px;color:var(--muted);margin-left:4px"></i>
+      </div>`;
+  } else {
+    area.innerHTML = `<button class="btn-login" onclick="openLogin()"><i class="fas fa-user"></i> Sign In</button>`;
+  }
+}
+
+function showUserMenu(){
+  const fb = getFirebase();
+  if(!currentUser) return;
+  const choice = confirm(`Signed in as: ${currentUser.displayName||currentUser.email}
+
+Click OK to sign out.`);
+  if(choice && fb){
+    fb.signOut(fb.auth).then(() => {
+      currentUser = null;
+      updateNavUser(null);
+      toast('Signed out successfully');
+    });
+  }
+}
+
+/* ─── PHONE VALIDATION ─── */
+function validatePhone(input){
+  const val = input.value.replace(/\D/g,'');
+  const tick = document.getElementById('phoneTick');
+  const hint = document.getElementById('phoneHint');
+  if(val.length >= 8){
+    input.style.borderColor = '#2ed573';
+    tick.style.display = 'block';
+    hint.innerHTML = '<span style="color:#2ed573">✓ Phone number looks good!</span>';
+  } else {
+    input.style.borderColor = 'var(--border)';
+    tick.style.display = 'none';
+    hint.innerHTML = '<span style="color:var(--muted)">Enter your phone number to continue</span>';
+  }
+}
+
+/* ─── SIGN IN WITH GOOGLE ─── */
+async function signInGoogle(){
+  const fb = getFirebase();
+
+  // Detect file:// protocol
+  if(window.location.protocol === 'file:'){
+    showAuthError('⚠️ Please open via Live Server (http://) not file://
+Use VS Code → Go Live button');
+    return;
+  }
+  if(!fb){ showAuthError('Firebase not initialised'); return; }
+
+  // Get phone from modal
+  const phoneInput = document.getElementById('loginPhone');
+  const countrySelect = document.getElementById('loginCountry');
+  const phone = phoneInput ? phoneInput.value.trim() : '';
+  const country = countrySelect ? countrySelect.value : '+91';
+
+  if(!phone || phone.replace(/\D/g,'').length < 8){
+    phoneInput.style.borderColor = 'var(--red)';
+    document.getElementById('phoneHint').innerHTML = '<span style="color:var(--red)">⚠ Please enter your phone number first</span>';
+    phoneInput.focus();
+    return;
+  }
+
+  // Loading state
+  const btn = document.getElementById('googleSignInBtn');
+  const btnText = document.getElementById('googleBtnText');
+  const spinner = document.getElementById('googleBtnSpinner');
+  if(btn){ btn.disabled=true; btnText.textContent='Signing in...'; spinner.style.display='inline'; }
+
+  try{
+    const provider = new fb.GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
+    const result = await fb.signInWithPopup(fb.auth, provider);
+    const user = result.user;
+
+    // Save user + phone to Firestore
+    await saveUserToFirestore(user, { phone: country + phone.replace(/\D/g,''), country });
+
+    // Show success state inside modal
+    document.getElementById('loginSuccess').style.display = 'block';
+    document.getElementById('successName').textContent = '✓ Welcome, ' + (user.displayName || 'User') + '!';
+    document.getElementById('successEmail').textContent = user.email || '';
+    btn.style.display = 'none';
+    document.getElementById('phoneHint').innerHTML = '';
+    phoneInput.parentElement.parentElement.style.display = 'none';
+
+    toast('Welcome, ' + (user.displayName||'User') + '! 🎉');
+
+    // Auto close modal after 2s
+    setTimeout(() => closeLogin(), 2000);
+
+  } catch(e){
+    const code = e.code || '';
+    if(btn){ btn.disabled=false; btnText.textContent='Continue with Google'; spinner.style.display='none'; }
+    if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+    if(code.includes('api-key-not-valid'))
+      showAuthError('⚠️ Open via Live Server (http://), not file://');
+    else if(code === 'auth/popup-blocked')
+      showAuthError('🚫 Popup blocked! Allow popups for this site in browser settings');
+    else if(code === 'auth/unauthorized-domain')
+      showAuthError('🚫 Add this domain in Firebase → Auth → Authorized Domains');
+    else
+      showAuthError('Sign in failed: ' + (e.message || code));
+  }
+}
+
+function showAuthError(msg){
+  const el = document.getElementById('authModalError');
+  if(el){ el.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg; el.style.display='block'; }
+  setTimeout(()=>{ if(el) el.style.display='none'; }, 6000);
+}
+
+async function saveUserToFirestore(user, extra={}){
+  const fb = getFirebase();
+  if(!fb) return;
+  try{
+    const docRef = fb.doc(fb.db,'users',user.uid);
+    await fb.setDoc(docRef, {
+      name: user.displayName||'',
+      email: user.email||'',
+      photoURL: user.photoURL||'',
+      provider: user.providerData[0]?.providerId||'google',
+      joinedAt: fb.serverTimestamp(),
+      ...extra
+    }, {merge:true});
+  } catch(e){ console.warn('Firestore save failed:', e.message); }
+}
+
+/* ─── AUTH MODALS ─── */
+function openLogin(){
+  // Reset modal to initial state
+  const success = document.getElementById('loginSuccess');
+  const btn = document.getElementById('googleSignInBtn');
+  const phoneRow = document.getElementById('loginPhone');
+  if(success) success.style.display='none';
+  if(btn){ btn.style.display='flex'; btn.disabled=false; document.getElementById('googleBtnText').textContent='Continue with Google'; document.getElementById('googleBtnSpinner').style.display='none'; }
+  if(phoneRow){ phoneRow.value=''; phoneRow.style.borderColor='var(--border)'; phoneRow.parentElement.parentElement.style.display='block'; }
+  const phoneTick = document.getElementById('phoneTick'); if(phoneTick) phoneTick.style.display='none';
+  const hint = document.getElementById('phoneHint'); if(hint) hint.innerHTML='Enter your phone number to continue';
+  const err = document.getElementById('authModalError'); if(err) err.style.display='none';
+  document.getElementById('authOverlay').classList.add('on');
+}
+function closeLogin(){ document.getElementById('authOverlay').classList.remove('on'); }
+document.getElementById('authOverlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeLogin(); });
+
+/* ─── ADMIN PORTAL ─── */
+function showAdminPortal(e){
+  e.preventDefault();
+  document.getElementById('adminPortal').classList.add('on');
+  if(!adminLoggedIn){
+    document.getElementById('adminLoginScreen').style.display = 'flex';
+    document.getElementById('adminDashboard').style.display = 'none';
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+    const err = document.getElementById('adminError');
+    if(err) err.style.display='none';
+  }
+}
+function hideAdminPortal(){ document.getElementById('adminPortal').classList.remove('on'); }
+
+function adminLogin(){
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value;
+  const err = document.getElementById('adminError');
+  if(u === ADMIN_USER && p === adminPassCurrent){
+    err.style.display='none';
+    adminLoggedIn = true;
+    document.getElementById('adminLoginScreen').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'flex';
+    loadDashboardStats();
+    loadProjectsTable();
+    loadUsers();
+    loadMessages();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+function adminLogout(){
+  adminLoggedIn = false;
+  document.getElementById('adminDashboard').style.display = 'none';
+  document.getElementById('adminLoginScreen').style.display = 'flex';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+}
+
+function showPanel(name, el){
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  el.classList.add('active');
+  if(name==='projects') loadProjectsTable();
+  if(name==='users') loadUsers();
+  if(name==='messages') loadMessages();
+}
+
+function changePassword(){
+  const curr = document.getElementById('currPass').value;
+  const nw = document.getElementById('newPass').value;
+  if(curr !== adminPassCurrent){ toast('Current password incorrect','warn'); return; }
+  if(!nw || nw.length < 6){ toast('New password must be 6+ characters','warn'); return; }
+  adminPassCurrent = nw;
+  document.getElementById('currPass').value = '';
+  document.getElementById('newPass').value = '';
+  toast('Password updated! ✅');
+}
+
+/* ─── PROJECTS ─── */
+async function loadProjectsFromFirebase(){
+  const fb = getFirebase();
+  if(!fb) return;
+  try{
+    const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
+    if(!snap.empty){
+      localProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      loadProjectsToSite();
+    }
+  } catch(e){ console.warn('Firebase load:', e.message); }
+}
+
+function loadProjectsToSite(){
+  const grid = document.getElementById('projectsGrid');
+  if(!localProjects.length){
+    grid.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center">No projects yet.</p>';
+    return;
+  }
+  grid.innerHTML = localProjects.map((p,i) => `
+    <div class="proj-card ${i===0?'big':''} fi d${Math.min(i,5)}">
+      <div class="proj-bg" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);background-image:url('${p.img||''}');background-size:cover;background-position:center"></div>
+      <div class="proj-overlay">
+        <div class="proj-cat">${p.category||''}</div>
+        <h3>${p.title||''}</h3>
+        <p>${p.desc||''}</p>
+      </div>
+    </div>
+  `).join('');
+  runAnim();
+}
+
+function loadDashboardStats(){
+  document.getElementById('dashProjects').textContent = localProjects.length;
+  document.getElementById('dashUsers').textContent = localUsers.length;
+  document.getElementById('dashMessages').textContent = localMessages.length;
+  const ra = document.getElementById('recentActivity');
+  const items = [
+    ...localProjects.slice(0,3).map(p=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">🏗️ <strong style="color:var(--white)">${p.title}</strong> <span class="badge badge-green" style="margin-left:8px">${p.status||'Active'}</span></div>`),
+    ...localUsers.slice(0,3).map(u=>`<div style="padding:8px 0;border-bottom:1px solid var(--border)">👤 <strong style="color:var(--white)">${u.name||u.email||'User'}</strong> <span style="font-size:12px;color:var(--muted)">${u.email||''}</span></div>`)
+  ];
+  ra.innerHTML = items.length ? items.join('') : '<div style="color:var(--muted);padding:12px 0">No recent activity yet.</div>';
+}
+
+function loadProjectsTable(){
+  const tbody = document.getElementById('projectsTableBody');
+  tbody.innerHTML = localProjects.map(p => `
+    <tr>
+      <td>${p.img ? `<img src="${p.img}" class="proj-thumb" onerror="this.style.display='none'"/>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-weight:600;color:var(--white)">${p.title||''}</td>
+      <td><span class="badge badge-yellow">${p.category||''}</span></td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${p.desc||''}</td>
+      <td><span class="badge ${p.status==='Completed'?'badge-yellow':'badge-green'}">${p.status||'Active'}</span></td>
+      <td><button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px"><i class="fas fa-trash"></i></button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects yet.</td></tr>';
+}
+
+async function addProject(){
+  const title = document.getElementById('projTitle').value.trim();
+  const category = document.getElementById('projCategory').value;
+  const desc = document.getElementById('projDesc').value.trim();
+  const imgData = uploadedFileData || document.getElementById('projImgUrl').value.trim();
+  if(!title){ toast('Please enter a project title','warn'); return; }
+
+  const proj = {id:'p'+Date.now(), title, category, desc, img:imgData, status:'Active', createdAt:new Date().toISOString()};
+  const fb = getFirebase();
+  if(fb){
+    try{
+      const ref = await fb.addDoc(fb.collection(fb.db,'projects'), proj);
+      proj.id = ref.id;
+      toast('Project saved to Firebase! ✅');
+    } catch(e){
+      console.warn(e.message);
+      toast('Saved locally (Firebase: '+e.message+')','warn');
+    }
+  }
+  localProjects.unshift(proj);
+  loadProjectsToSite();
+  loadProjectsTable();
+  loadDashboardStats();
+  clearProjectForm();
+}
+
+async function deleteProject(id){
+  if(!confirm('Delete this project from website?')) return;
+  const fb = getFirebase();
+  if(fb){
+    try{ await fb.deleteDoc(fb.doc(fb.db,'projects',id)); } catch(e){ console.warn(e.message); }
+  }
+  localProjects = localProjects.filter(p => p.id !== id);
+  loadProjectsToSite();
+  loadProjectsTable();
+  loadDashboardStats();
+  toast('Project deleted.');
+}
+
+function clearProjectForm(){
+  ['projTitle','projDesc','projImgUrl'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('uploadPreview').style.display='none';
+  uploadedFileData = null;
+}
+
+function handleFileUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 4*1024*1024){ toast('File too large. Use image under 4MB.','warn'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const compressed = canvas.toDataURL('image/jpeg', 0.75);
+      uploadedFileData = compressed;
+      document.getElementById('previewImg').src = compressed;
+      document.getElementById('previewName').textContent = file.name;
+      const kb = Math.round((compressed.length*0.75)/1024);
+      document.getElementById('uploadPreview').style.display='block';
+      if(kb > 900) toast('Image large after compression. Try a smaller one.','warn');
+      else toast('Image ready! (~' + kb + ' KB)');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function loadUsers(){
+  const fb = getFirebase();
+  const tbody = document.getElementById('usersTableBody');
+  if(!fb){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Firebase not configured</td></tr>'; return; }
+  try{
+    const snap = await fb.getDocs(fb.collection(fb.db,'users'));
+    localUsers = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const dashEl = document.getElementById('dashUsers');
+    if(dashEl) dashEl.textContent = localUsers.length;
+    tbody.innerHTML = localUsers.length ? localUsers.map(u=>`
+      <tr>
+        <td style="font-weight:600;color:var(--white)">${u.name||'—'}</td>
+        <td>${u.email||'—'}</td>
+        <td>${u.phone||'<span style="color:var(--muted)">Not provided</span>'}</td>
+        <td>${u.country||'—'}</td>
+        <td><span class="badge badge-yellow">Google</span></td>
+        <td style="color:var(--muted);font-size:12px">${u.joinedAt?.toDate?.()?.toLocaleDateString('en-IN')||'—'}</td>
+      </tr>
+    `).join('') : '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No users signed in yet.</td></tr>';
+  } catch(e){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:32px;color:#e74c3c">'+e.message+'</td></tr>'; }
+}
+
+async function loadMessages(){
+  const fb = getFirebase();
+  const body = document.getElementById('messagesBody');
+  if(!fb){ body.innerHTML='<p style="padding:20px;color:var(--muted)">Firebase not configured</p>'; return; }
+  try{
+    const snap = await fb.getDocs(fb.collection(fb.db,'messages'));
+    localMessages = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const dashEl = document.getElementById('dashMessages');
+    if(dashEl) dashEl.textContent = localMessages.length;
+    body.innerHTML = localMessages.length ? localMessages.map(m=>`
+      <div style="padding:20px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong style="color:var(--white);font-size:15px">${m.name||'Unknown'}</strong>
+          <span style="font-size:11px;color:var(--yellow);background:rgba(241,196,15,0.1);padding:3px 10px;border-radius:20px;border:1px solid rgba(241,196,15,0.2)">${m.service||'General'}</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
+          <i class="fas fa-envelope" style="color:var(--red);margin-right:6px"></i>${m.email||''}
+          ${m.phone?`<span style="margin-left:14px"><i class="fas fa-phone" style="color:var(--red);margin-right:6px"></i>${m.phone}</span>`:''}
+        </div>
+        <div style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.6">${m.message||''}</div>
+      </div>
+    `).join('') : '<p style="text-align:center;padding:40px;color:var(--muted)">No messages yet.</p>';
+  } catch(e){ body.innerHTML='<p style="padding:20px;color:#e74c3c">'+e.message+'</p>'; }
+}
+
+async function loadProjects(){ await loadProjectsFromFirebase(); toast('Projects refreshed'); }
+
+/* ─── CONTACT FORM ─── */
+async function submitContact(btn){
+  const form = btn.closest('section');
+  const name = form.querySelector('input[type=text]').value.trim();
+  const phone = form.querySelector('input[type=tel]').value.trim();
+  const email = form.querySelector('input[type=email]').value.trim();
+  const service = form.querySelector('select').value;
+  const message = form.querySelector('textarea').value.trim();
+  if(!name||!phone||!email){ toast('Please fill all required fields','warn'); return; }
+  const fb = getFirebase();
+  if(fb){
+    try{
+      await fb.addDoc(fb.collection(fb.db,'messages'), {name,phone,email,service,message,createdAt:fb.serverTimestamp()});
+    } catch(e){ console.warn(e.message); }
+  }
+  localMessages.push({name,phone,email,service,message});
+  toast('Message sent! We will contact you soon. 🏗️');
+  form.querySelectorAll('input,textarea').forEach(el => el.value='');
+  form.querySelector('select').selectedIndex = 0;
+}
+
+function nlSub(btn){ toast('Subscribed! Thank you. ✅'); btn.closest('.nl-form').querySelector('input').value=''; }
+
+/* ─── SCROLL ─── */
+let ctrRan = false;
+window.addEventListener('scroll', () => {
+  const s = window.scrollY;
+  const total = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('scrollBar').style.width = ((s/total)*100) + '%';
+  document.getElementById('nav').classList.toggle('scrolled', s > 60);
+  document.getElementById('btt').classList.toggle('show', s > 400);
+  runAnim();
+  if(!ctrRan){
+    const el = document.querySelector('.hstat-num[data-t]');
+    if(el && el.getBoundingClientRect().top < window.innerHeight){
+      ctrRan = true;
+      document.querySelectorAll('.hstat-num[data-t]').forEach(el => {
+        const t = +el.dataset.t; let c = 0; const step = t/50;
+        const ti = setInterval(() => {
+          c = Math.min(c+step, t);
+          el.textContent = Math.round(c) + '+';
+          if(c >= t) clearInterval(ti);
+        }, 25);
+      });
+    }
+  }
+});
+
+function runAnim(){
+  document.querySelectorAll('.fi,.fl,.fr').forEach(el => {
+    if(el.getBoundingClientRect().top < window.innerHeight - 60) el.classList.add('vis');
+  });
+}
+runAnim();
+
+/* ─── UTILS ─── */
+function mNavToggle(){ document.getElementById('mNav').classList.toggle('on'); }
+function togFloat(){ document.getElementById('floatItems').classList.toggle('on'); document.getElementById('fTog').classList.toggle('on'); }
+
+function toast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = type==='warn'?'var(--yellow)':type==='error'?'var(--red)':'rgba(46,213,115,0.5)';
+  t.style.color = type==='warn'?'var(--yellow)':type==='error'?'#e74c3c':'var(--white)';
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 3500);
+}
+</script>
+</body>
+</html>
