@@ -115,8 +115,8 @@ ul{list-style:none}
 .hero-bg{
   position:absolute;inset:0;
   background:
-    linear-gradient(130deg,rgba(10,10,10,0.88) 40%,rgba(192,57,43,0.12) 70%,rgba(10,10,10,0.82) 100%),
-    url('https://images.unsplash.com/photo-1528127269029-79666269b1b7?w=1600&q=80') center/cover no-repeat;
+    linear-gradient(130deg,rgba(10,10,10,0.86) 35%,rgba(192,57,43,0.10) 65%,rgba(10,10,10,0.80) 100%),
+    url('https://images.unsplash.com/photo-1486718448047-52ca7e4463f7?w=1600&q=80') center/cover no-repeat;
   transform:scale(1.04);
   animation:heroZoom 10s ease-out forwards;
   background-attachment:fixed;
@@ -124,8 +124,8 @@ ul{list-style:none}
 @media(max-width:768px){
   .hero-bg{
     background:
-      linear-gradient(135deg,rgba(10,10,10,0.90) 45%,rgba(192,57,43,0.10) 75%,rgba(10,10,10,0.85) 100%),
-      url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=80') center/cover no-repeat;
+      linear-gradient(135deg,rgba(10,10,10,0.88) 45%,rgba(192,57,43,0.08) 70%,rgba(10,10,10,0.84) 100%),
+      url('https://images.unsplash.com/photo-1486718448047-52ca7e4463f7?w=900&q=80') center/cover no-repeat;
     background-attachment:scroll;
   }
 }
@@ -493,7 +493,14 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 /* === TOPBAR MOBILE === */
 @media(max-width:640px){
   .topbar{
-    display:none; /* hide topbar on mobile to save space */
+    display:flex; /* show topbar on mobile with admin button */
+    padding:8px 16px;
+    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .topbar-l,.topbar-r{
+    font-size:11px;
   }
 }
 
@@ -508,10 +515,12 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
   .logo-text{font-size:18px}
   .logo-symbol{width:34px;height:34px}
   .logo-sub{font-size:8px;letter-spacing:2px}
-  #adminNavBtn{display:none!important}
-  #navUserArea .btn-login{padding:6px 12px;font-size:11px}
+  #adminNavBtn{display:inline-flex!important;padding:7px 12px!important;font-size:11px!important;gap:4px!important}
+  #adminNavBtn i{font-size:12px!important}
+  #navUserArea .btn-login{padding:6px 12px;font-size:11px;display:none}
   .hamburger{display:flex}
   .nav-menu{display:none}
+  .nav-user{justify-content:flex-end}
   body{padding-top:60px}
 }
 
