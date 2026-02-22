@@ -115,10 +115,19 @@ ul{list-style:none}
 .hero-bg{
   position:absolute;inset:0;
   background:
-    linear-gradient(130deg,rgba(10,10,10,0.92) 35%,rgba(192,57,43,0.15) 70%,rgba(10,10,10,0.85) 100%),
-    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') center/cover no-repeat;
+    linear-gradient(130deg,rgba(10,10,10,0.88) 40%,rgba(192,57,43,0.12) 70%,rgba(10,10,10,0.82) 100%),
+    url('https://images.unsplash.com/photo-1528127269029-79666269b1b7?w=1600&q=80') center/cover no-repeat;
   transform:scale(1.04);
   animation:heroZoom 10s ease-out forwards;
+  background-attachment:fixed;
+}
+@media(max-width:768px){
+  .hero-bg{
+    background:
+      linear-gradient(135deg,rgba(10,10,10,0.90) 45%,rgba(192,57,43,0.10) 75%,rgba(10,10,10,0.85) 100%),
+      url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=80') center/cover no-repeat;
+    background-attachment:scroll;
+  }
 }
 @keyframes heroZoom{to{transform:scale(1)}}
 .hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:1}
@@ -437,6 +446,45 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
   animation:fadeUp .9s .6s both;
 }
 @media(max-width:960px){.hero-img-overlay{display:none}}
+@media(max-width:768px){
+  .hero{
+    padding-top:60px;
+    min-height:600px;
+  }
+  .hero-body{
+    padding:0 20px;
+    max-width:100%;
+  }
+  .hero h1{
+    font-size:clamp(40px,8vw,80px);
+    margin-bottom:16px;
+  }
+  .hero-desc{
+    font-size:15px;
+    margin-bottom:28px;
+  }
+  .hero-btns{
+    flex-direction:column;
+    gap:12px;
+  }
+  .hero-btns a{
+    width:100%;
+    text-align:center;
+    padding:14px 24px;
+  }
+  .hero-stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+  .hstat{
+    padding:16px 14px;
+    flex-direction:column;
+    text-align:center;
+    gap:8px;
+  }
+  .hstat-icon{
+    margin:0 auto;
+  }
+}
 
 /* ══════════════════════════════════════════════
    MOBILE HEAVEN — Full Mobile Overhaul ✨
@@ -1441,8 +1489,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 
   <!-- Family + building image on right -->
   <img class="hero-img-overlay"
-    src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80"
-    alt="Family with dream home"
+    src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=900&q=80"
+    alt="Happy family with new home"
     onerror="this.style.display='none'"
   >
 
@@ -2565,32 +2613,58 @@ function changePassword(){
 
 async function loadProjectsFromFirebase(){
   const fb = getFirebase();
-  if(!fb) return;
+  if(!fb) {
+    console.log('Firebase not initialized yet');
+    return;
+  }
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
     if(!snap.empty){
       localProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      console.log('Loaded', localProjects.length, 'projects from Firebase');
       loadProjectsToSite();
+    } else {
+      console.log('No projects found in Firebase');
     }
-  } catch(e){ console.warn('Firebase projects load:', e.message); }
+  } catch(e){ 
+    console.warn('Firebase projects load error:', e.message);
+  }
 }
 
 function loadProjectsToSite(){
   const grid = document.getElementById('projectsGrid');
-  if(!grid) return;
+  if(!grid) {
+    console.error('Projects grid element not found');
+    return;
+  }
   if(!localProjects.length){
     grid.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;grid-column:1/-1">No projects yet.</p>';
     return;
   }
-  grid.innerHTML = localProjects.map((p, i) => `
+  
+  grid.innerHTML = localProjects.map((p, i) => {
+    const hasImg = p.img && p.img.trim().length > 0;
+    return `
     <div class="proj-card ${i===0?'big':''} fi d${Math.min(i,5)}">
-      <div class="proj-bg" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);${p.img?'background-image:url("'+p.img.replace(/"/g,"'")+ '");background-size:cover;background-position:center':''}" ></div>
+      <div class="proj-bg ${hasImg ? 'has-img' : ''}" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);background-size:cover;background-position:center;"></div>
       <div class="proj-overlay">
         <div class="proj-cat">${p.category||''}</div>
         <h3>${p.title||''}</h3>
         <p>${p.desc||''}</p>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  
+  // Apply background images via JavaScript to handle complex URLs better
+  grid.querySelectorAll('.proj-bg').forEach((el, idx) => {
+    if(localProjects[idx] && localProjects[idx].img && localProjects[idx].img.trim()){
+      try {
+        el.style.backgroundImage = `url('${localProjects[idx].img}')`;
+      } catch(e) {
+        console.error('Error setting background image for project', idx, e);
+      }
+    }
+  });
   runAnim();
 }
 
