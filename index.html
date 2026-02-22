@@ -11,35 +11,27 @@
 
 <!-- Firebase SDK -->
 <script type="module">
-  try {
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-    const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-    const { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
-      authDomain: "site-356cd.firebaseapp.com",
-      databaseURL: "https://site-356cd-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "site-356cd",
-      storageBucket: "site-356cd.firebasestorage.app",
-      messagingSenderId: "1021929307309",
-      appId: "1:1021929307309:web:37aaa3be1120723d311a24",
-      measurementId: "G-DM0JYZK14X"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
+    authDomain: "site-356cd.firebaseapp.com",
+    databaseURL: "https://site-356cd-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "site-356cd",
+    storageBucket: "site-356cd.firebasestorage.app",
+    messagingSenderId: "1021929307309",
+    appId: "1:1021929307309:web:37aaa3be1120723d311a24",
+    measurementId: "G-DM0JYZK14X"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-    // expose globally + fire ready event
-    window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp };
-    window._fbReady = true;
-    document.dispatchEvent(new Event('firebaseReady'));
-  } catch(err) {
-    console.warn('Firebase failed to load:', err.message);
-    window._fbReady = false;
-    document.dispatchEvent(new Event('firebaseReady'));
-  }
+  // expose globally
+  window._fb = { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp };
 </script>
 
 <style>
@@ -94,10 +86,7 @@ ul{list-style:none}
 .logo-symbol svg{width:100%;height:100%}
 .logo-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--white);letter-spacing:1px;line-height:1}
 .logo-text em{color:var(--red);font-style:normal}
-.logo-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:700;
-  background:linear-gradient(90deg,#c0392b,#f39c12,#e74c3c);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 1px 4px rgba(192,57,43,0.5));}
+.logo-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'DM Sans',sans-serif}
 .nav-menu{display:flex;align-items:center;gap:4px}
 .nav-menu a{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);padding:8px 14px;border-radius:3px;letter-spacing:.3px;transition:all .25s;position:relative}
 .nav-menu a:hover,.nav-menu a.active{color:var(--yellow)}
@@ -125,29 +114,15 @@ ul{list-style:none}
 .hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
 .hero-bg{
   position:absolute;inset:0;
-  overflow:hidden;
-}
-.hero-bg-slide{
-  position:absolute;inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:0;
-  transform:scale(1.06);
-  transition:opacity 1.8s ease-in-out, transform 8s ease-out;
-}
-.hero-bg-slide.active{
-  opacity:1;
-  transform:scale(1);
-}
-.hero-bg::after{
-  content:'';
-  position:absolute;inset:0;
   background:
-    linear-gradient(125deg,rgba(10,10,10,0.75) 15%,rgba(192,57,43,0.18) 50%,rgba(10,10,10,0.78) 100%);
-  z-index:2;
+    linear-gradient(130deg,rgba(10,10,10,0.92) 35%,rgba(192,57,43,0.15) 70%,rgba(10,10,10,0.85) 100%),
+    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') center/cover no-repeat;
+  transform:scale(1.04);
+  animation:heroZoom 10s ease-out forwards;
 }
-.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:3}
-.hero-body{position:relative;z-index:4;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8%;max-width:900px}
+@keyframes heroZoom{to{transform:scale(1)}}
+.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:1}
+.hero-body{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8%;max-width:900px}
 .hero-tag{display:inline-flex;align-items:center;gap:12px;color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:22px;animation:fadeUp .8s .2s both}
 .hero-tag::before{content:'';width:36px;height:2px;background:var(--yellow)}
 .hero-tag::after{content:'';width:36px;height:2px;background:var(--yellow)}
@@ -162,7 +137,7 @@ ul{list-style:none}
 .btn-outline:hover{border-color:var(--yellow);color:var(--yellow)}
 
 /* Hero stats bar */
-.hero-stats{position:absolute;bottom:0;left:0;right:0;z-index:5;background:rgba(26,26,26,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(26,26,26,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
 .hstat{padding:24px 28px;border-right:1px solid var(--border);display:flex;align-items:center;gap:14px}
 .hstat:last-child{border-right:none}
 .hstat-icon{width:44px;height:44px;min-width:44px;background:rgba(192,57,43,0.15);border:1px solid var(--border-r);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--red)}
@@ -462,45 +437,6 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
   animation:fadeUp .9s .6s both;
 }
 @media(max-width:960px){.hero-img-overlay{display:none}}
-@media(max-width:768px){
-  .hero{
-    padding-top:60px;
-    min-height:600px;
-  }
-  .hero-body{
-    padding:0 20px;
-    max-width:100%;
-  }
-  .hero h1{
-    font-size:clamp(40px,8vw,80px);
-    margin-bottom:16px;
-  }
-  .hero-desc{
-    font-size:15px;
-    margin-bottom:28px;
-  }
-  .hero-btns{
-    flex-direction:column;
-    gap:12px;
-  }
-  .hero-btns a{
-    width:100%;
-    text-align:center;
-    padding:14px 24px;
-  }
-  .hero-stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-  .hstat{
-    padding:16px 14px;
-    flex-direction:column;
-    text-align:center;
-    gap:8px;
-  }
-  .hstat-icon{
-    margin:0 auto;
-  }
-}
 
 /* ══════════════════════════════════════════════
    MOBILE HEAVEN — Full Mobile Overhaul ✨
@@ -509,14 +445,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 /* === TOPBAR MOBILE === */
 @media(max-width:640px){
   .topbar{
-    display:flex; /* show topbar on mobile with admin button */
-    padding:8px 16px;
-    gap:12px;
-    justify-content:space-between;
-    align-items:center;
-  }
-  .topbar-l,.topbar-r{
-    font-size:11px;
+    display:none; /* hide topbar on mobile to save space */
   }
 }
 
@@ -531,12 +460,10 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
   .logo-text{font-size:18px}
   .logo-symbol{width:34px;height:34px}
   .logo-sub{font-size:8px;letter-spacing:2px}
-  #adminNavBtn{display:inline-flex!important;padding:7px 12px!important;font-size:11px!important;gap:4px!important}
-  #adminNavBtn i{font-size:12px!important}
-  #navUserArea .btn-login{padding:6px 12px;font-size:11px;display:none}
+  #adminNavBtn{display:none!important}
+  #navUserArea .btn-login{padding:6px 12px;font-size:11px}
   .hamburger{display:flex}
   .nav-menu{display:none}
-  .nav-user{justify-content:flex-end}
   body{padding-top:60px}
 }
 
@@ -556,7 +483,9 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     justify-content:flex-end;
   }
   .hero-bg{
-    overflow:hidden;
+    background:
+      linear-gradient(180deg,rgba(10,10,10,0.6) 0%,rgba(10,10,10,0.97) 75%),
+      url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80') center/cover no-repeat;
   }
   .hero-body{
     padding:0 20px 24px;
@@ -1116,24 +1045,10 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 /* Background art */
 .signin-bg{
   position:absolute;inset:0;
-  z-index:0;
-  overflow:hidden;
-}
-.signin-bg-slide{
-  position:absolute;inset:0;
-  background-size:cover;
-  background-position:center;
-  opacity:0;
-  transition:opacity 1.6s ease-in-out;
-  animation:none;
-}
-.signin-bg-slide.active{opacity:1}
-.signin-bg::after{
-  content:'';
-  position:absolute;inset:0;
   background:
-    linear-gradient(160deg,rgba(10,10,10,0.78) 0%,rgba(192,57,43,0.14) 50%,rgba(10,10,10,0.82) 100%);
-  z-index:2;
+    linear-gradient(160deg,rgba(10,10,10,0.93) 40%,rgba(192,57,43,0.08) 70%,rgba(10,10,10,0.96) 100%),
+    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80') center/cover no-repeat;
+  z-index:0;
 }
 .signin-grain{
   position:absolute;inset:0;z-index:1;
@@ -1344,12 +1259,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 ══════════════════════════════════════════════ -->
 <div id="signInPage">
   <!-- Background -->
-  <div class="signin-bg">
-    <div class="signin-bg-slide active" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&q=85')"></div>
-    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1478860409698-8707f313ee8b?w=1400&q=85')"></div>
-    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=1400&q=85')"></div>
-    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?w=1400&q=85')"></div>
-  </div>
+  <div class="signin-bg"></div>
   <div class="signin-grain"></div>
   <div class="signin-orb"></div>
   <div class="signin-orb2"></div>
@@ -1367,29 +1277,15 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     <!-- Logo -->
     <div class="signin-logo" style="text-align:center;margin-bottom:28px;animation:fadeUp .7s .1s both">
       <div style="position:relative;display:inline-block">
-        <!-- Outer gradient glow disc — red→yellow gradient, large circle -->
-        <div style="position:absolute;inset:-40px;border-radius:50%;
-          background:radial-gradient(circle,
-            rgba(192,57,43,0.55) 0%,
-            rgba(220,80,30,0.35) 25%,
-            rgba(241,196,15,0.20) 50%,
-            rgba(241,196,15,0.06) 68%,
-            transparent 78%);
-          animation:logoPulse 2.4s ease-in-out infinite;pointer-events:none"></div>
-        <!-- Inner warm glow ring -->
-        <div style="position:absolute;inset:-16px;border-radius:50%;
-          background:radial-gradient(circle,
-            rgba(255,100,30,0.30) 0%,
-            rgba(241,196,15,0.18) 40%,
-            transparent 72%);
-          animation:logoPulse 2.4s ease-in-out infinite .4s;pointer-events:none"></div>
+        <!-- Outer glow layers -->
+        <div style="position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.45) 0%,rgba(192,57,43,0.18) 45%,transparent 72%);animation:logoPulse 2.4s ease-in-out infinite;pointer-events:none"></div>
+        <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(241,196,15,0.12) 0%,transparent 70%);animation:logoPulse 2.4s ease-in-out infinite .4s;pointer-events:none"></div>
         <!-- Logo image -->
         <img src="whatsapp-logo.png" alt="JB Venture"
           style="height:120px;width:auto;object-fit:contain;display:block;position:relative;z-index:2;
                  filter:drop-shadow(0 0 18px rgba(192,57,43,0.85)) drop-shadow(0 0 36px rgba(192,57,43,0.45)) drop-shadow(0 0 6px rgba(255,255,255,0.15));
                  animation:logoFloat 3.5s ease-in-out infinite"/>
       </div>
-
     </div>
 
     <!-- Card -->
@@ -1456,7 +1352,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 
         <!-- Helper note -->
         <p style="font-size:11px;color:rgba(255,255,255,.25);text-align:center;margin-top:14px;line-height:1.6">
-          Enter your phone number and sign in with Google to continue.
+          Enter phone number first, then sign in with Google.<br>Both details will be saved together.
         </p>
       </div>
     </div>
@@ -1475,10 +1371,10 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <div class="topbar">
   <div class="topbar-l">
     <a href="tel:+917373720302"><i class="fas fa-phone"></i>73737 20302</a>
-    <a href="mailto:official@jbventurearchitects.com"><i class="fas fa-envelope"></i>official@jbventurearchitects.com</a>
+    <a href="/cdn-cgi/l/email-protection#2e474048416e444c584b405a5b5c4b4f5c4d46475a4b4d5a5d004d4143"><i class="fas fa-envelope"></i><span class="__cf_email__" data-cfemail="157c7b737a557f7763707b616067707467767d7c61707661663b767a78">[email&#160;protected]</span></a>
   </div>
   <div class="topbar-r">
-    <span><i class="fas fa-map-marker-alt"></i>99 C, Ettayapuram Rd, Polpettai East, Thoothukudi</span>
+    <span><i class="fas fa-map-marker-alt"></i>Thoothukudi, Tamil Nadu</span>
     <span><i class="fas fa-clock"></i>Mon–Sat: 9AM–7PM</span>
     <!-- admin link moved to navbar -->
   </div>
@@ -1540,19 +1436,13 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 
 <!-- ══════ HERO ══════ -->
 <section class="hero" id="home">
-  <div class="hero-bg">
-    <div class="hero-bg-slide active" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=85')"></div>
-    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1504917595217-340c4ee82601?w=1600&q=85')"></div>
-    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=1600&q=85')"></div>
-    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1478860409698-8707f313ee8b?w=1600&q=85')"></div>
-    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?w=1600&q=85')"></div>
-  </div>
+  <div class="hero-bg"></div>
   <div class="hero-grain"></div>
 
   <!-- Family + building image on right -->
   <img class="hero-img-overlay"
-    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80"
-    alt="Modern high-tech construction crane"
+    src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900&q=80"
+    alt="Family with dream home"
     onerror="this.style.display='none'"
   >
 
@@ -1602,8 +1492,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <section class="about-wrap" id="about">
   <div class="about-grid">
     <div class="about-img-stack fl">
-      <img class="ai-main" src="https://images.unsplash.com/photo-1504917595217-340c4ee82601?w=700&q=75" alt="High-tech construction site" onerror="this.src='https://via.placeholder.com/500x400/1a1a1a/c0392b?text=JB+Venture'">
-      <img class="ai-sub" src="https://images.unsplash.com/photo-1469022563149-aa64dbd37dc0?w=500&q=75" alt="Modern architecture" onerror="this.style.display='none'">
+      <img class="ai-main" src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=700&q=75" alt="Construction site" onerror="this.src='https://via.placeholder.com/500x400/1a1a1a/c0392b?text=JB+Venture'">
+      <img class="ai-sub" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=500&q=75" alt="Architecture" onerror="this.style.display='none'">
       <div class="ai-badge">
         <div class="ai-badge-num">10+</div>
         <div class="ai-badge-txt">Years</div>
@@ -1828,8 +1718,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
         <div><h5>WhatsApp</h5><a href="https://wa.me/917373720302" target="_blank">Chat with Us</a></div>
       </div>
       <div class="c-item">
-        <div class="c-icon"><i class="fas fa-envelope"></i></div>
-        <div><h5>Email</h5><a href="mailto:official@jbventurearchitects.com" style="color:var(--yellow);font-weight:600">official@jbventurearchitects.com</a></div>
+        <div class="c-icon"><i class="fas fa-clock"></i></div>
+        <div><h5>Hours</h5><p>Mon–Fri: 9AM–7PM &nbsp;|&nbsp; Sat: 9AM–5PM</p></div>
       </div>
     </div>
     <div class="contact-form fr">
@@ -1886,9 +1776,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     </div>
     <div class="f-col">
       <h4>Contact</h4>
-      <div class="c-item" style="margin-bottom:12px;align-items:flex-start"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:10px;margin-top:3px"></i><span style="font-size:13px;color:rgba(255,255,255,.4)">99 C, Ettayapuram Rd, Polpettai East, Thoothukudi, Tamil Nadu</span></div>
+      <div class="c-item" style="margin-bottom:12px;align-items:flex-start"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:10px;margin-top:3px"></i><span style="font-size:13px;color:rgba(255,255,255,.4)">99 C, Ettayapuram Rd, Thoothukudi</span></div>
       <div class="c-item" style="margin-bottom:12px"><i class="fas fa-phone" style="color:var(--red);margin-right:10px"></i><a href="tel:+917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">73737 20302</a></div>
-      <div class="c-item" style="margin-bottom:12px"><i class="fas fa-envelope" style="color:var(--red);margin-right:10px"></i><a href="mailto:official@jbventurearchitects.com" style="font-size:13px;color:var(--yellow);font-weight:600">official@jbventurearchitects.com</a></div>
       <div class="c-item" style="margin-bottom:20px"><i class="fab fa-whatsapp" style="color:var(--red);margin-right:10px"></i><a href="https://wa.me/917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">WhatsApp Chat</a></div>
       <h4>Newsletter</h4>
       <p style="color:rgba(255,255,255,.3);font-size:12px;margin-bottom:8px">Stay updated with our projects</p>
@@ -1900,26 +1789,11 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
   </div>
   <div class="f-bottom">
     <span>© 2025 JB Venture | Constructions &amp; Architects. All rights reserved.</span>
-    <div style="display:flex;gap:20px;align-items:center">
+    <div style="display:flex;gap:20px">
       <a href="#">Privacy</a>
       <a href="#">Terms</a>
       <a href="https://www.jbventurearchitects.com" target="_blank">jbventurearchitects.com</a>
     </div>
-  </div>
-  <div style="background:var(--black);border-top:1px solid rgba(255,255,255,0.04);padding:14px 5%;text-align:center">
-    <span style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px">Crafted with</span>
-    <span style="color:var(--red);font-size:13px;margin:0 4px">♥</span>
-    <span style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px">by</span>
-    <span style="
-      font-family:'Bebas Neue',sans-serif;
-      font-size:15px;
-      letter-spacing:3px;
-      margin-left:6px;
-      background:linear-gradient(90deg,var(--red),var(--yellow));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-    ">JES TECH</span>
   </div>
 </footer>
 
@@ -2197,7 +2071,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <div class="toast" id="toast"></div>
 
 <!-- ══════ JAVASCRIPT ══════ -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ═══════════════════════════════════════════════════════
    JB VENTURE — COMPLETE FIXED JS
    All buttons verified & working
@@ -2284,28 +2158,22 @@ window.addEventListener('scroll', () => {
 window.addEventListener('load', () => {
   runAnim();
   loadProjectsToSite();
+  // Trigger counter check in case stats are already visible
   setTimeout(triggerCounters, 800);
 
-  // Start slideshows after DOM is ready
-  setTimeout(() => {
-    startSlideshow('.hero', 5000);
-    startSlideshow('#signInPage', 4500);
-  }, 100);
-
-  // Attach overlay click-to-close
+  // Attach overlay click-to-close (safe — element definitely exists by load time)
   const overlay = document.getElementById('authOverlay');
   if(overlay) overlay.addEventListener('click', e => { if(e.target === e.currentTarget) closeLogin(); });
 
-  // Wait for Firebase to be ready before attaching auth listener
-  function attachFirebaseAuth(){
-    const fb = getFirebase();
-    if(!fb) return; // Firebase failed — sign-in page stays visible
+  // Firebase auth listener
+  const fb = getFirebase();
+  if(fb){
     fb.onAuthStateChanged(fb.auth, user => {
       if(user){
         currentUser = user;
         updateNavUser(user);
         saveUserToFirestore(user);
-        // Dismiss sign-in page if still showing
+        // If sign-in page still showing, skip it
         const sp = document.getElementById('signInPage');
         if(sp && !sp.classList.contains('hidden')){
           sp.classList.add('exit');
@@ -2318,33 +2186,9 @@ window.addEventListener('load', () => {
     });
     loadProjectsFromFirebase();
   }
-
-  if(window._fbReady !== undefined){
-    attachFirebaseAuth();
-  } else {
-    document.addEventListener('firebaseReady', attachFirebaseAuth);
-    // Safety timeout — if Firebase never fires, just continue
-    setTimeout(() => {
-      if(window._fbReady === undefined){
-        window._fbReady = false;
-        document.dispatchEvent(new Event('firebaseReady'));
-      }
-    }, 6000);
-  }
 });
 
-/* ─── BACKGROUND SLIDESHOWS ─── */
-function startSlideshow(containerSelector, interval){
-  const slides = document.querySelectorAll(containerSelector + ' .hero-bg-slide, ' + containerSelector + ' .signin-bg-slide');
-  if(!slides.length) return;
-  let current = 0;
-  setInterval(() => {
-    slides[current].classList.remove('active');
-    current = (current + 1) % slides.length;
-    slides[current].classList.add('active');
-  }, interval);
-}
-// Slideshows are started inside window.addEventListener('load') above
+/* ─── NAV USER DISPLAY ─── */
 function updateNavUser(user){
   const area = document.getElementById('navUserArea');
   if(!area) return;
@@ -2447,16 +2291,28 @@ function updatePhoneBtn(){
   }
 }
 
-/* ── Continue with Google (sign-in page) ── */
+/* ── Continue with Google (sign-in page) — collects phone + Google together ── */
 async function signinWithGoogle(){
   const phoneEl = document.getElementById('signinPhone');
   const countryEl = document.getElementById('signinCountry');
   const phone = phoneEl ? phoneEl.value.replace(/\D/g,'') : '';
 
-  // Phone is now OPTIONAL — skip validation if empty
+  // Validate phone first
+  if(phone.length < 8){
+    if(phoneEl){ phoneEl.focus(); phoneEl.style.borderColor = 'rgba(192,57,43,.8)'; }
+    showSigninError('⚠️ Please enter your phone number first (Step 1)');
+    return;
+  }
 
   if(window.location.protocol === 'file:'){
-    showSigninError('⚠️ Please open this via a web server (http://), not file://');
+    showSigninError('⚠️ Open via a web server (http://), not file://');
+    return;
+  }
+
+  const fb = getFirebase();
+  if(!fb){
+    // Demo mode — no Firebase configured, just proceed
+    showSigninSuccess('Guest', '');
     return;
   }
 
@@ -2467,27 +2323,6 @@ async function signinWithGoogle(){
   if(txt) txt.textContent = 'Signing in…';
   if(spin) spin.style.display = 'inline';
 
-  // Wait for Firebase to be ready (up to 5 seconds)
-  let fb = getFirebase();
-  if(!fb && window._fbReady === undefined){
-    // Firebase still loading — wait for ready event
-    await new Promise(resolve => {
-      const handler = () => { document.removeEventListener('firebaseReady', handler); resolve(); };
-      document.addEventListener('firebaseReady', handler);
-      setTimeout(resolve, 5000); // max wait 5s
-    });
-    fb = getFirebase();
-  }
-
-  if(!fb){
-    // Firebase unavailable — show error
-    showSigninError('⚠️ Unable to connect. Please check your internet and try again.');
-    if(btn) btn.disabled = false;
-    if(txt) txt.textContent = 'Continue with Google';
-    if(spin) spin.style.display = 'none';
-    return;
-  }
-
   try{
     const provider = new fb.GoogleAuthProvider();
     provider.addScope('email');
@@ -2497,9 +2332,9 @@ async function signinWithGoogle(){
     const country = countryEl ? countryEl.value : '+91';
 
     await saveUserToFirestore(user, {
-      phone: phone ? (country + phone) : '',
+      phone: country + phone,
       country,
-      signInMethod: 'google'
+      signInMethod: 'google+phone'
     });
 
     showSigninSuccess(user.displayName || 'User', user.email || '');
@@ -2510,15 +2345,10 @@ async function signinWithGoogle(){
     if(spin) spin.style.display = 'none';
     const code = e.code || '';
     if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
-    if(code === 'auth/popup-blocked'){
-      showSigninError('🚫 Popup blocked — please allow popups for this site and try again.');
-    } else if(code === 'auth/unauthorized-domain'){
-      showSigninError('🚫 Domain not authorized. Please contact support.');
-    } else if(code.includes('api-key-not-valid')){
-      showSigninError('⚠️ Firebase config error. Please contact support.');
-    } else {
-      showSigninError('Sign in failed. Please try again.');
-    }
+    if(code.includes('api-key-not-valid')) showSigninError('⚠️ Firebase API key invalid. Check your config.');
+    else if(code === 'auth/popup-blocked') showSigninError('🚫 Popup blocked — please allow popups in your browser settings.');
+    else if(code === 'auth/unauthorized-domain') showSigninError('🚫 Unauthorized domain. Add this domain in Firebase → Auth → Authorized Domains.');
+    else showSigninError('Sign in failed: ' + (e.message || code));
   }
 }
 
@@ -2575,12 +2405,22 @@ function showAuthError(msg){
 
 /* Google sign-in from the navbar modal */
 async function signInGoogle(){
-  if(window.location.protocol === 'file:'){ showAuthError('⚠️ Open via a web server (http://), not file://'); return; }
+  const fb = getFirebase();
+  if(window.location.protocol === 'file:'){ showAuthError('⚠️ Open via Live Server (http://), not file://'); return; }
 
   const phoneInput = document.getElementById('loginPhone');
   const countrySelect = document.getElementById('loginCountry');
   const phone = phoneInput ? phoneInput.value.replace(/\D/g,'') : '';
   const country = countrySelect ? countrySelect.value : '+91';
+
+  if(phone.length < 8){
+    if(phoneInput){ phoneInput.style.borderColor = 'var(--red)'; phoneInput.focus(); }
+    const hint = document.getElementById('phoneHint');
+    if(hint) hint.innerHTML = '<span style="color:var(--red)">⚠ Please enter your phone number first</span>';
+    return;
+  }
+
+  if(!fb){ showAuthError('Firebase not initialised'); return; }
 
   const btn = document.getElementById('googleSignInBtn');
   const btnText = document.getElementById('googleBtnText');
@@ -2589,32 +2429,13 @@ async function signInGoogle(){
   if(btnText) btnText.textContent = 'Signing in…';
   if(spinner) spinner.style.display = 'inline';
 
-  // Wait for Firebase to be ready
-  let fb = getFirebase();
-  if(!fb && window._fbReady === undefined){
-    await new Promise(resolve => {
-      const handler = () => { document.removeEventListener('firebaseReady', handler); resolve(); };
-      document.addEventListener('firebaseReady', handler);
-      setTimeout(resolve, 5000);
-    });
-    fb = getFirebase();
-  }
-
-  if(!fb){
-    showAuthError('⚠️ Firebase unavailable. Try again later.');
-    if(btn){ btn.disabled = false; btn.style.display = 'flex'; }
-    if(btnText) btnText.textContent = 'Continue with Google';
-    if(spinner) spinner.style.display = 'none';
-    return;
-  }
-
   try{
     const provider = new fb.GoogleAuthProvider();
     provider.addScope('email'); provider.addScope('profile');
     const result = await fb.signInWithPopup(fb.auth, provider);
     const user = result.user;
 
-    await saveUserToFirestore(user, { phone: phone ? (country + phone) : '', country });
+    await saveUserToFirestore(user, { phone: country + phone, country });
 
     // Show success inside modal
     const ls = document.getElementById('loginSuccess');
@@ -2637,7 +2458,8 @@ async function signInGoogle(){
     if(spinner) spinner.style.display = 'none';
     const code = e.code || '';
     if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
-    if(code === 'auth/popup-blocked') showAuthError('🚫 Popup blocked! Allow popups for this site.');
+    if(code.includes('api-key-not-valid')) showAuthError('⚠️ Firebase API key invalid');
+    else if(code === 'auth/popup-blocked') showAuthError('🚫 Popup blocked! Allow popups for this site.');
     else if(code === 'auth/unauthorized-domain') showAuthError('🚫 Add this domain in Firebase → Auth → Authorized Domains');
     else showAuthError('Sign in failed: ' + (e.message || code));
   }
@@ -2743,58 +2565,32 @@ function changePassword(){
 
 async function loadProjectsFromFirebase(){
   const fb = getFirebase();
-  if(!fb) {
-    console.log('Firebase not initialized yet');
-    return;
-  }
+  if(!fb) return;
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
     if(!snap.empty){
       localProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
-      console.log('Loaded', localProjects.length, 'projects from Firebase');
       loadProjectsToSite();
-    } else {
-      console.log('No projects found in Firebase');
     }
-  } catch(e){ 
-    console.warn('Firebase projects load error:', e.message);
-  }
+  } catch(e){ console.warn('Firebase projects load:', e.message); }
 }
 
 function loadProjectsToSite(){
   const grid = document.getElementById('projectsGrid');
-  if(!grid) {
-    console.error('Projects grid element not found');
-    return;
-  }
+  if(!grid) return;
   if(!localProjects.length){
     grid.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;grid-column:1/-1">No projects yet.</p>';
     return;
   }
-  
-  grid.innerHTML = localProjects.map((p, i) => {
-    const hasImg = p.img && p.img.trim().length > 0;
-    return `
+  grid.innerHTML = localProjects.map((p, i) => `
     <div class="proj-card ${i===0?'big':''} fi d${Math.min(i,5)}">
-      <div class="proj-bg ${hasImg ? 'has-img' : ''}" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);background-size:cover;background-position:center;"></div>
+      <div class="proj-bg" style="background:linear-gradient(135deg,#1a0a0a,#2a1010);${p.img?'background-image:url("'+p.img.replace(/"/g,"'")+ '");background-size:cover;background-position:center':''}" ></div>
       <div class="proj-overlay">
         <div class="proj-cat">${p.category||''}</div>
         <h3>${p.title||''}</h3>
         <p>${p.desc||''}</p>
       </div>
-    </div>`;
-  }).join('');
-  
-  // Apply background images via JavaScript to handle complex URLs better
-  grid.querySelectorAll('.proj-bg').forEach((el, idx) => {
-    if(localProjects[idx] && localProjects[idx].img && localProjects[idx].img.trim()){
-      try {
-        el.style.backgroundImage = `url('${localProjects[idx].img}')`;
-      } catch(e) {
-        console.error('Error setting background image for project', idx, e);
-      }
-    }
-  });
+    </div>`).join('');
   runAnim();
 }
 
@@ -3018,4 +2814,16 @@ async function submitContact(btn){
 function nlSub(btn){
   const input = btn.previousElementSibling;
   if(!input || !input.value.trim()){ toast('Please enter your email address','warn'); return; }
-  if(!/^[^@
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value.trim())){ toast('Please enter a valid email address','warn'); return; }
+  const fb = getFirebase();
+  if(fb){
+    fb.addDoc(fb.collection(fb.db,'newsletter'), { email: input.value.trim(), subscribedAt: fb.serverTimestamp() })
+      .catch(e => console.warn('Newsletter save:', e.message));
+  }
+  toast('Thank you for subscribing! 🏗️');
+  input.value = '';
+}
+
+</script>
+</body>
+</html>
