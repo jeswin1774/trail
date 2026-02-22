@@ -86,7 +86,10 @@ ul{list-style:none}
 .logo-symbol svg{width:100%;height:100%}
 .logo-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--white);letter-spacing:1px;line-height:1}
 .logo-text em{color:var(--red);font-style:normal}
-.logo-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-family:'DM Sans',sans-serif}
+.logo-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:700;
+  background:linear-gradient(90deg,#c0392b,#f39c12,#e74c3c);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 1px 4px rgba(192,57,43,0.5));}
 .nav-menu{display:flex;align-items:center;gap:4px}
 .nav-menu a{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);padding:8px 14px;border-radius:3px;letter-spacing:.3px;transition:all .25s;position:relative}
 .nav-menu a:hover,.nav-menu a.active{color:var(--yellow)}
@@ -114,24 +117,29 @@ ul{list-style:none}
 .hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
 .hero-bg{
   position:absolute;inset:0;
+  overflow:hidden;
+}
+.hero-bg-slide{
+  position:absolute;inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transform:scale(1.06);
+  transition:opacity 1.8s ease-in-out, transform 8s ease-out;
+}
+.hero-bg-slide.active{
+  opacity:1;
+  transform:scale(1);
+}
+.hero-bg::after{
+  content:'';
+  position:absolute;inset:0;
   background:
-    linear-gradient(130deg,rgba(10,10,10,0.86) 35%,rgba(192,57,43,0.10) 65%,rgba(10,10,10,0.80) 100%),
-    url('https://images.unsplash.com/photo-1486718448047-52ca7e4463f7?w=1600&q=80') center/cover no-repeat;
-  transform:scale(1.04);
-  animation:heroZoom 10s ease-out forwards;
-  background-attachment:fixed;
+    linear-gradient(125deg,rgba(10,10,10,0.75) 15%,rgba(192,57,43,0.18) 50%,rgba(10,10,10,0.78) 100%);
+  z-index:2;
 }
-@media(max-width:768px){
-  .hero-bg{
-    background:
-      linear-gradient(135deg,rgba(10,10,10,0.88) 45%,rgba(192,57,43,0.08) 70%,rgba(10,10,10,0.84) 100%),
-      url('https://images.unsplash.com/photo-1486718448047-52ca7e4463f7?w=900&q=80') center/cover no-repeat;
-    background-attachment:scroll;
-  }
-}
-@keyframes heroZoom{to{transform:scale(1)}}
-.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:1}
-.hero-body{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8%;max-width:900px}
+.hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");z-index:3}
+.hero-body{position:relative;z-index:4;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8%;max-width:900px}
 .hero-tag{display:inline-flex;align-items:center;gap:12px;color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:22px;animation:fadeUp .8s .2s both}
 .hero-tag::before{content:'';width:36px;height:2px;background:var(--yellow)}
 .hero-tag::after{content:'';width:36px;height:2px;background:var(--yellow)}
@@ -146,7 +154,7 @@ ul{list-style:none}
 .btn-outline:hover{border-color:var(--yellow);color:var(--yellow)}
 
 /* Hero stats bar */
-.hero-stats{position:absolute;bottom:0;left:0;right:0;z-index:3;background:rgba(26,26,26,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;z-index:5;background:rgba(26,26,26,0.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
 .hstat{padding:24px 28px;border-right:1px solid var(--border);display:flex;align-items:center;gap:14px}
 .hstat:last-child{border-right:none}
 .hstat-icon{width:44px;height:44px;min-width:44px;background:rgba(192,57,43,0.15);border:1px solid var(--border-r);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--red)}
@@ -540,9 +548,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     justify-content:flex-end;
   }
   .hero-bg{
-    background:
-      linear-gradient(180deg,rgba(10,10,10,0.6) 0%,rgba(10,10,10,0.97) 75%),
-      url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80') center/cover no-repeat;
+    overflow:hidden;
   }
   .hero-body{
     padding:0 20px 24px;
@@ -1102,10 +1108,24 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 /* Background art */
 .signin-bg{
   position:absolute;inset:0;
-  background:
-    linear-gradient(160deg,rgba(10,10,10,0.93) 40%,rgba(192,57,43,0.08) 70%,rgba(10,10,10,0.96) 100%),
-    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80') center/cover no-repeat;
   z-index:0;
+  overflow:hidden;
+}
+.signin-bg-slide{
+  position:absolute;inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0;
+  transition:opacity 1.6s ease-in-out;
+  animation:none;
+}
+.signin-bg-slide.active{opacity:1}
+.signin-bg::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    linear-gradient(160deg,rgba(10,10,10,0.78) 0%,rgba(192,57,43,0.14) 50%,rgba(10,10,10,0.82) 100%);
+  z-index:2;
 }
 .signin-grain{
   position:absolute;inset:0;z-index:1;
@@ -1316,7 +1336,12 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 ══════════════════════════════════════════════ -->
 <div id="signInPage">
   <!-- Background -->
-  <div class="signin-bg"></div>
+  <div class="signin-bg">
+    <div class="signin-bg-slide active" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&q=85')"></div>
+    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1478860409698-8707f313ee8b?w=1400&q=85')"></div>
+    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=1400&q=85')"></div>
+    <div class="signin-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?w=1400&q=85')"></div>
+  </div>
   <div class="signin-grain"></div>
   <div class="signin-orb"></div>
   <div class="signin-orb2"></div>
@@ -1334,15 +1359,29 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
     <!-- Logo -->
     <div class="signin-logo" style="text-align:center;margin-bottom:28px;animation:fadeUp .7s .1s both">
       <div style="position:relative;display:inline-block">
-        <!-- Outer glow layers -->
-        <div style="position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.45) 0%,rgba(192,57,43,0.18) 45%,transparent 72%);animation:logoPulse 2.4s ease-in-out infinite;pointer-events:none"></div>
-        <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(241,196,15,0.12) 0%,transparent 70%);animation:logoPulse 2.4s ease-in-out infinite .4s;pointer-events:none"></div>
+        <!-- Outer gradient glow disc — red→yellow gradient, large circle -->
+        <div style="position:absolute;inset:-40px;border-radius:50%;
+          background:radial-gradient(circle,
+            rgba(192,57,43,0.55) 0%,
+            rgba(220,80,30,0.35) 25%,
+            rgba(241,196,15,0.20) 50%,
+            rgba(241,196,15,0.06) 68%,
+            transparent 78%);
+          animation:logoPulse 2.4s ease-in-out infinite;pointer-events:none"></div>
+        <!-- Inner warm glow ring -->
+        <div style="position:absolute;inset:-16px;border-radius:50%;
+          background:radial-gradient(circle,
+            rgba(255,100,30,0.30) 0%,
+            rgba(241,196,15,0.18) 40%,
+            transparent 72%);
+          animation:logoPulse 2.4s ease-in-out infinite .4s;pointer-events:none"></div>
         <!-- Logo image -->
         <img src="whatsapp-logo.png" alt="JB Venture"
           style="height:120px;width:auto;object-fit:contain;display:block;position:relative;z-index:2;
                  filter:drop-shadow(0 0 18px rgba(192,57,43,0.85)) drop-shadow(0 0 36px rgba(192,57,43,0.45)) drop-shadow(0 0 6px rgba(255,255,255,0.15));
                  animation:logoFloat 3.5s ease-in-out infinite"/>
       </div>
+
     </div>
 
     <!-- Card -->
@@ -1493,13 +1532,19 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 
 <!-- ══════ HERO ══════ -->
 <section class="hero" id="home">
-  <div class="hero-bg"></div>
+  <div class="hero-bg">
+    <div class="hero-bg-slide active" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=85')"></div>
+    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1504917595217-340c4ee82601?w=1600&q=85')"></div>
+    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=1600&q=85')"></div>
+    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1478860409698-8707f313ee8b?w=1600&q=85')"></div>
+    <div class="hero-bg-slide" style="background-image:url('https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?w=1600&q=85')"></div>
+  </div>
   <div class="hero-grain"></div>
 
   <!-- Family + building image on right -->
   <img class="hero-img-overlay"
-    src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=900&q=80"
-    alt="Happy family with new home"
+    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80"
+    alt="Modern high-tech construction crane"
     onerror="this.style.display='none'"
   >
 
@@ -1549,8 +1594,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <section class="about-wrap" id="about">
   <div class="about-grid">
     <div class="about-img-stack fl">
-      <img class="ai-main" src="https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=700&q=75" alt="Construction site" onerror="this.src='https://via.placeholder.com/500x400/1a1a1a/c0392b?text=JB+Venture'">
-      <img class="ai-sub" src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=500&q=75" alt="Architecture" onerror="this.style.display='none'">
+      <img class="ai-main" src="https://images.unsplash.com/photo-1504917595217-340c4ee82601?w=700&q=75" alt="High-tech construction site" onerror="this.src='https://via.placeholder.com/500x400/1a1a1a/c0392b?text=JB+Venture'">
+      <img class="ai-sub" src="https://images.unsplash.com/photo-1469022563149-aa64dbd37dc0?w=500&q=75" alt="Modern architecture" onerror="this.style.display='none'">
       <div class="ai-badge">
         <div class="ai-badge-num">10+</div>
         <div class="ai-badge-txt">Years</div>
@@ -1775,8 +1820,8 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
         <div><h5>WhatsApp</h5><a href="https://wa.me/917373720302" target="_blank">Chat with Us</a></div>
       </div>
       <div class="c-item">
-        <div class="c-icon"><i class="fas fa-clock"></i></div>
-        <div><h5>Hours</h5><p>Mon–Fri: 9AM–7PM &nbsp;|&nbsp; Sat: 9AM–5PM</p></div>
+        <div class="c-icon"><i class="fas fa-envelope"></i></div>
+        <div><h5>Email</h5><a href="/cdn-cgi/l/email-protection#7c131a1a151f151d103c161e0a191208090e191d0e1f141508191f080f521f1311" style="color:var(--yellow);font-weight:600"><span class="__cf_email__" data-cfemail="214e4747484248404d614b4357444f55545344405342494855444255520f424e4c">[email&#160;protected]</span></a></div>
       </div>
     </div>
     <div class="contact-form fr">
@@ -1835,6 +1880,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
       <h4>Contact</h4>
       <div class="c-item" style="margin-bottom:12px;align-items:flex-start"><i class="fas fa-map-marker-alt" style="color:var(--red);margin-right:10px;margin-top:3px"></i><span style="font-size:13px;color:rgba(255,255,255,.4)">99 C, Ettayapuram Rd, Thoothukudi</span></div>
       <div class="c-item" style="margin-bottom:12px"><i class="fas fa-phone" style="color:var(--red);margin-right:10px"></i><a href="tel:+917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">73737 20302</a></div>
+      <div class="c-item" style="margin-bottom:12px"><i class="fas fa-envelope" style="color:var(--red);margin-right:10px"></i><a href="/cdn-cgi/l/email-protection#fc939a9a959f959d90bc969e8a999288898e999d8e9f949588999f888fd29f9391" style="font-size:13px;color:var(--yellow);font-weight:600"><span class="__cf_email__" data-cfemail="d4bbb2b2bdb7bdb5b894beb6a2b1baa0a1a6b1b5a6b7bcbda0b1b7a0a7fab7bbb9">[email&#160;protected]</span></a></div>
       <div class="c-item" style="margin-bottom:20px"><i class="fab fa-whatsapp" style="color:var(--red);margin-right:10px"></i><a href="https://wa.me/917373720302" style="font-size:13px;color:rgba(255,255,255,.4)">WhatsApp Chat</a></div>
       <h4>Newsletter</h4>
       <p style="color:rgba(255,255,255,.3);font-size:12px;margin-bottom:8px">Stay updated with our projects</p>
@@ -2128,7 +2174,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
 <div class="toast" id="toast"></div>
 
 <!-- ══════ JAVASCRIPT ══════ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ═══════════════════════════════════════════════════════
    JB VENTURE — COMPLETE FIXED JS
    All buttons verified & working
@@ -2245,7 +2291,19 @@ window.addEventListener('load', () => {
   }
 });
 
-/* ─── NAV USER DISPLAY ─── */
+/* ─── BACKGROUND SLIDESHOWS ─── */
+function startSlideshow(containerSelector, interval){
+  const slides = document.querySelectorAll(containerSelector + ' .hero-bg-slide, ' + containerSelector + ' .signin-bg-slide');
+  if(!slides.length) return;
+  let current = 0;
+  setInterval(() => {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }, interval);
+}
+startSlideshow('.hero', 5000);
+startSlideshow('#signInPage', 4500);
 function updateNavUser(user){
   const area = document.getElementById('navUserArea');
   if(!area) return;
@@ -2897,16 +2955,4 @@ async function submitContact(btn){
 function nlSub(btn){
   const input = btn.previousElementSibling;
   if(!input || !input.value.trim()){ toast('Please enter your email address','warn'); return; }
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value.trim())){ toast('Please enter a valid email address','warn'); return; }
-  const fb = getFirebase();
-  if(fb){
-    fb.addDoc(fb.collection(fb.db,'newsletter'), { email: input.value.trim(), subscribedAt: fb.serverTimestamp() })
-      .catch(e => console.warn('Newsletter save:', e.message));
-  }
-  toast('Thank you for subscribing! 🏗️');
-  input.value = '';
-}
-
-</script>
-</body>
-</html>
+  if(!/^[^@
