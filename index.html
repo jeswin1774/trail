@@ -2673,6 +2673,7 @@ function loadProjectsToSite(){
   grid.innerHTML = localProjects.map((p, i) => `
     <div class="proj-card ${i===0?'big':''} fi d${Math.min(i,5)}" data-proj-idx="${i}">
       <div class="proj-bg" data-img-idx="${i}"></div>
+      <div class="proj-gallery" data-gallery-idx="${i}"></div>
       <div class="proj-overlay">
         <div class="proj-cat">${p.category||''}</div>
         <h3>${p.title||''}</h3>
@@ -2691,6 +2692,18 @@ function loadProjectsToSite(){
       bgEl.style.backgroundImage = 'url(' + imgSrc + ')';
       bgEl.style.backgroundSize = 'cover';
       bgEl.style.backgroundPosition = 'center';
+    }
+    // fill gallery thumbnails if multiple images
+    const galleryEl = grid.querySelector(`.proj-gallery[data-gallery-idx="${i}"]`);
+    if(galleryEl){
+      const urls = Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls : (p.img ? [p.img] : []);
+      if(urls.length){
+        galleryEl.innerHTML = urls.map(u=>`<img src="${u}" alt="${(p.title||'')}">`).join('');
+        // attach click handler to open full image
+        galleryEl.querySelectorAll('img').forEach(img => img.addEventListener('click', (e)=>{ window.open(e.target.src,'_blank'); }));
+      } else {
+        galleryEl.innerHTML = '';
+      }
     }
   });
 
