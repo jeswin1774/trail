@@ -2194,6 +2194,59 @@ function signInGoogle() {
     });
 }
 
+// Handler for the full-page sign-in button (main page uses different element ids)
+function signinWithGoogle() {
+  const phone = document.getElementById('signinPhone').value.trim();
+  const country = document.getElementById('signinCountry').value;
+  const fullPhone = country + phone;
+
+  const errEl = document.getElementById('signinError');
+  errEl.style.display = 'none';
+  if (!/^\d{10,15}$/.test(phone)) {
+    errEl.innerText = 'Please enter a valid phone number (10-15 digits)';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('signinGoogleBtn');
+  btn.disabled = true;
+  document.getElementById('signinGoogleText').style.opacity = '0.5';
+  document.getElementById('signinGoogleSpinner').style.display = 'inline';
+
+  const { auth, GoogleAuthProvider, signInWithPopup, db, doc, setDoc, serverTimestamp } = window._fb;
+  const provider = new GoogleAuthProvider();
+
+  signInWithPopup(auth, provider)
+    .then(async (result) => {
+      const user = result.user;
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName || 'Anonymous',
+        email: user.email || '',
+        phone: fullPhone,
+        country: country,
+        provider: 'google',
+        createdAt: serverTimestamp()
+      });
+
+      // Show success on main sign-in page
+      document.getElementById('signInPage').classList.add('hidden');
+      document.getElementById('signinSuccessName').innerText = user.displayName || 'Welcome!';
+      document.getElementById('signinSuccessEmail').innerText = user.email || '';
+      document.getElementById('signinSuccess').style.display = 'block';
+      document.getElementById('signinForms').style.display = 'none';
+    })
+    .catch((error) => {
+      console.error(error);
+      errEl.innerText = 'Sign-in failed. Please try again.';
+      errEl.style.display = 'block';
+    })
+    .finally(() => {
+      btn.disabled = false;
+      document.getElementById('signinGoogleText').style.opacity = '1';
+      document.getElementById('signinGoogleSpinner').style.display = 'none';
+    });
+}
+
 function enterWebsite() {
   document.getElementById('signInPage').classList.add('exit');
   setTimeout(() => {
