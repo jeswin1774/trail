@@ -1990,6 +1990,7 @@ footer{background:var(--ash);border-top:1px solid var(--border)}
                 <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,.3)">Max total size: 100MB</p>
               </div>
               <input type="file" id="projFile" accept="image/*" multiple style="display:none" onchange="handleFileUpload(this)"/>
+              <input type="file" id="projAddFile" accept="image/*" multiple style="display:none" onchange="handleAddImages(this)"/>
               <div id="uploadPreview" style="margin-top:12px;display:none;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start"></div>
               <div style="display:flex;gap:12px;margin-top:16px">
                 <button class="btn-red btn-admin" onclick="addProject()"><i class="fas fa-plus"></i>Add Project</button>
@@ -2091,6 +2092,84 @@ let localProjects = [
 let localUsers = [];
 let localMessages = [];
 let uploadedFilesData = []; // holds compressed data URLs for multiple images
+let currentAddProjectId = null;
+
+function openAddImages(projectId){
+  currentAddProjectId = projectId;
+  const inp = document.getElementById('projAddFile');
+  if(!inp) return;
+  inp.value = '';
+  inp.click();
+}
+
+async function handleAddImages(input){
+  const files = Array.from(input.files || []);
+  if(!files.length) return;
+  const totalMB = files.reduce((s,f) => s + f.size, 0) / (1024*1024);
+  if(totalMB > 100){ toast('Total file size exceeds 100 MB. Please select smaller files.','warn'); input.value = ''; return; }
+
+  // reuse compressor used for new uploads
+  const readAndCompress = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1200;
+        let w = img.width, h = img.height;
+        if(w > MAX){ h = Math.round(h * MAX / w); w = MAX; }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.8);
+        resolve({ name: file.name, data: compressed });
+      };
+      img.onerror = () => reject(new Error('Image load error'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('File read error'));
+    reader.readAsDataURL(file);
+  });
+
+  try{
+    const results = await Promise.all(files.map(f => readAndCompress(f)));
+    const newData = results.map(r => r.data);
+
+    const fb = getFirebase();
+    if(fb && currentAddProjectId){
+      const docRef = fb.doc(fb.db,'projects', currentAddProjectId);
+      try{
+        const snap = await fb.getDoc(docRef);
+        const existing = (snap && snap.exists && snap.exists()) ? (snap.data().imageUrls || (snap.data().img ? [snap.data().img] : [])) : [];
+        const merged = existing.concat(newData);
+        await fb.setDoc(docRef, { imageUrls: merged }, { merge: true });
+        toast('Images added to project ✅');
+      } catch(e){
+        console.error('Error updating project images:', e);
+        toast('Failed to add images to project','warn');
+      }
+    } else {
+      // update localProjects
+      const proj = localProjects.find(p => p.id === currentAddProjectId);
+      if(proj){
+        proj.imageUrls = Array.isArray(proj.imageUrls) ? proj.imageUrls.concat(newData) : (proj.img ? [proj.img].concat(newData) : newData.slice());
+        if(!proj.img && proj.imageUrls && proj.imageUrls.length) proj.img = proj.imageUrls[0];
+        toast('Images added locally ✅');
+      }
+    }
+
+    // refresh UI
+    await loadProjectsFromFirebase();
+    loadProjectsTable();
+    loadProjectsToSite();
+  } catch(err){
+    console.error(err);
+    toast('Failed to process selected images','warn');
+  } finally {
+    input.value = '';
+    currentAddProjectId = null;
+  }
+}
 
 /* ─── FIREBASE helper ─── */
 function getFirebase(){ return window._fb || null; }
@@ -2642,15 +2721,20 @@ function loadProjectsTable(){
     return;
   }
   tbody.innerHTML = localProjects.map(p => {
-    const thumb = (p.img && p.img.trim()) ? p.img : (Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls[0] : '');
+    const imageUrls = Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls : (p.img ? [p.img] : []);
+    const imagesPreview = imageUrls.slice(0,3).map(url => `<img src="${url}" style="width:40px;height:30px;object-fit:cover;border-radius:3px;border:1px solid var(--border)" onerror="this.style.display='none'">`).join('');
+    const more = imageUrls.length > 3 ? `<span style="font-size:10px;color:var(--muted);margin-left:6px">+${imageUrls.length-3}</span>` : '';
     return `
     <tr>
-      <td data-label="Image">${thumb ? `<img src="${thumb}" class="proj-thumb" style="width:60px;height:40px;object-fit:cover;border-radius:3px" onerror="this.style.display='none'">` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td data-label="Image"><div class="admin-img-preview">${imagesPreview} ${more}</div></td>
       <td data-label="Title" style="font-weight:600;color:var(--white)">${p.title||''}</td>
       <td data-label="Category"><span class="badge badge-yellow">${p.category||''}</span></td>
       <td data-label="Description" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${p.desc||''}</td>
       <td data-label="Status"><span class="badge ${p.status==='Completed'?'badge-yellow':'badge-green'}">${p.status||'Active'}</span></td>
-      <td data-label="Action"><button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px" title="Delete"><i class="fas fa-trash"></i></button></td>
+      <td data-label="Action">
+        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px" onclick="openAddImages('${p.id}')"><i class="fas fa-image"></i> Add Images</button>
+        <button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px" title="Delete"><i class="fas fa-trash"></i></button>
+      </td>
     </tr>`}).join('');
 }
 
