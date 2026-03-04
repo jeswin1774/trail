@@ -2566,7 +2566,14 @@ async function loadProjectsFromFirebase(){
   try{
     const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
     if(!snap.empty){
-      localProjects = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      localProjects = snap.docs.map(d => {
+        const data = d.data();
+        // normalize: if imageUrls exists and img missing, use first image as img for thumbnail/backdrop
+        if(!data.img && Array.isArray(data.imageUrls) && data.imageUrls.length){
+          data.img = data.imageUrls[0];
+        }
+        return {id: d.id, ...data};
+      });
       console.log('Loaded', localProjects.length, 'projects from Firebase');
       localProjects.forEach((p,i) => console.log(`Project ${i}:`, p.title, '| has image:', !!(p.img && p.img.trim())));
       loadProjectsToSite();
@@ -2600,8 +2607,9 @@ function loadProjectsToSite(){
     if(!bgEl) return;
     // Default dark gradient
     bgEl.style.background = 'linear-gradient(135deg,#1a0a0a,#2a1010)';
-    if(p.img && p.img.trim()){
-      bgEl.style.backgroundImage = 'url(' + p.img + ')';
+    const imgSrc = (p.img && p.img.trim()) ? p.img : (Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls[0] : null);
+    if(imgSrc){
+      bgEl.style.backgroundImage = 'url(' + imgSrc + ')';
       bgEl.style.backgroundSize = 'cover';
       bgEl.style.backgroundPosition = 'center';
     }
@@ -2633,15 +2641,17 @@ function loadProjectsTable(){
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects yet. Add your first project above.</td></tr>';
     return;
   }
-  tbody.innerHTML = localProjects.map(p => `
+  tbody.innerHTML = localProjects.map(p => {
+    const thumb = (p.img && p.img.trim()) ? p.img : (Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls[0] : '');
+    return `
     <tr>
-      <td data-label="Image">${p.img ? `<img src="${p.img}" class="proj-thumb" style="width:60px;height:40px;object-fit:cover;border-radius:3px" onerror="this.style.display='none'">` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td data-label="Image">${thumb ? `<img src="${thumb}" class="proj-thumb" style="width:60px;height:40px;object-fit:cover;border-radius:3px" onerror="this.style.display='none'">` : '<span style="color:var(--muted)">—</span>'}</td>
       <td data-label="Title" style="font-weight:600;color:var(--white)">${p.title||''}</td>
       <td data-label="Category"><span class="badge badge-yellow">${p.category||''}</span></td>
       <td data-label="Description" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${p.desc||''}</td>
       <td data-label="Status"><span class="badge ${p.status==='Completed'?'badge-yellow':'badge-green'}">${p.status||'Active'}</span></td>
       <td data-label="Action"><button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px" title="Delete"><i class="fas fa-trash"></i></button></td>
-    </tr>`).join('');
+    </tr>`}).join('');
 }
 
 async function addProject(){
