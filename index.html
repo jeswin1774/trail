@@ -68,11 +68,19 @@
         <!-- Outer glow layers -->
         <div style="position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.45) 0%,rgba(192,57,43,0.18) 45%,transparent 72%);animation:logoPulse 2.4s ease-in-out infinite;pointer-events:none"></div>
         <div style="position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,rgba(241,196,15,0.12) 0%,transparent 70%);animation:logoPulse 2.4s ease-in-out infinite .4s;pointer-events:none"></div>
-        <!-- Logo image -->
-        <img src="whatsapp-logo.png" alt="JB Venture"
-          style="height:120px;width:auto;object-fit:contain;display:block;position:relative;z-index:2;
-                 filter:drop-shadow(0 0 18px rgba(192,57,43,0.85)) drop-shadow(0 0 36px rgba(192,57,43,0.45)) drop-shadow(0 0 6px rgba(255,255,255,0.15));
-                 animation:logoFloat 3.5s ease-in-out infinite"/>
+        <!-- Logo SVG - JB Venture Branded -->
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="height:120px;width:auto;display:block;position:relative;z-index:2;filter:drop-shadow(0 0 18px rgba(192,57,43,0.85)) drop-shadow(0 0 36px rgba(192,57,43,0.45)) drop-shadow(0 0 6px rgba(255,255,255,0.15));animation:logoFloat 3.5s ease-in-out infinite">
+          <!-- Outer diamond -->
+          <polygon points="50,8 92,50 50,92 8,50" fill="none" stroke="#c0392b" stroke-width="6" stroke-linejoin="round"/>
+          <!-- Inner diamond -->
+          <polygon points="50,20 80,50 50,80 20,50" fill="none" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"/>
+          <!-- Center vertical bar -->
+          <rect x="44" y="10" width="12" height="80" fill="#c0392b" rx="2"/>
+          <!-- Accent bar -->
+          <rect x="47" y="10" width="6" height="25" fill="#f1c40f" rx="1"/>
+          <!-- Base accent -->
+          <circle cx="50" cy="86" r="6" fill="#f1c40f"/>
+        </svg>
       </div>
     </div>
 
