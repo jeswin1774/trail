@@ -753,15 +753,23 @@ function adminLogin(){
     const db = document.getElementById('adminDashboard');
     if(ls) ls.style.display = 'none';
     if(db){ db.style.display=''; db.classList.add('shown'); }
-    loadDashboardStats();
-    loadProjectsTable();
-    loadUsers();
-    loadMessages();
     
-    const toastEl = document.getElementById('toast');
-    if(toastEl) {
-      toast('✅ Login successful!', 'ok');
-    }
+    // Load projects from Firebase FIRST, then refresh all panels
+    console.log('📥 Loading projects from Firebase...');
+    loadProjectsFromFirebase().then(() => {
+      console.log('✓ Firebase projects loaded');
+      loadDashboardStats();
+      loadProjectsTable();
+      loadUsers();
+      loadMessages();
+      
+      const toastEl = document.getElementById('toast');
+      if(toastEl) {
+        toast('✅ Login successful!', 'ok');
+      }
+    }).catch(err => {
+      console.error('❌ Failed to load projects:', err);
+    });
     
     // Restore last active panel from localStorage
     setTimeout(() => {
@@ -925,15 +933,26 @@ function loadDashboardStats(){
 
 function loadProjectsTable(){
   const tbody = document.getElementById('projectsTableBody');
-  if(!tbody) return;
+  if(!tbody) {
+    console.error('❌ projectsTableBody not found!');
+    return;
+  }
+  
+  console.log(`📊 Loading projects table: ${localProjects.length} projects`);
+  
   if(!localProjects.length){
+    console.log('⚠️ No projects to display');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">No projects yet. Add your first project above.</td></tr>';
     return;
   }
+  
   tbody.innerHTML = localProjects.map(p => {
     const imageUrls = Array.isArray(p.imageUrls) && p.imageUrls.length ? p.imageUrls : (p.img ? [p.img] : []);
     const imagesPreview = imageUrls.slice(0,3).map(url => `<img src="${url}" style="width:40px;height:30px;object-fit:cover;border-radius:3px;border:1px solid var(--border)" onerror="this.style.display='none'">`).join('');
     const more = imageUrls.length > 3 ? `<span style="font-size:10px;color:var(--muted);margin-left:6px">+${imageUrls.length-3}</span>` : '';
+    
+    console.log(`  ✓ Project: ${p.title} (ID: ${p.id}) | Images: ${imageUrls.length}`);
+    
     return `
     <tr>
       <td data-label="Image"><div class="admin-img-preview">${imagesPreview} ${more}</div></td>
@@ -942,10 +961,10 @@ function loadProjectsTable(){
       <td data-label="Description" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)">${p.desc||''}</td>
       <td data-label="Status"><span class="badge ${p.status==='Completed'?'badge-yellow':'badge-green'}">${p.status||'Active'}</span></td>
       <td data-label="Action">
-        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px" onclick="openAddImages('${p.id}')"><i class="fas fa-image"></i> Add Images</button>
-        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px" onclick="deleteLogo('${p.id}')" title="Delete only the logo"><i class="fas fa-icons"></i> Delete Logo</button>
-        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px" onclick="deleteAllImages('${p.id}')" title="Delete all images"><i class="fas fa-trash-alt"></i> Delete All Images</button>
-        <button class="btn-admin btn-ash" onclick="deleteProject('${p.id}')" style="padding:6px 10px;font-size:11px" title="Delete"><i class="fas fa-trash"></i></button>
+        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px;cursor:pointer" onclick="openAddImages('${p.id}')" title="Click to add more images"><i class="fas fa-image"></i> Add Images</button>
+        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px;cursor:pointer" onclick="deleteLogo('${p.id}')" title="Delete only the logo"><i class="fas fa-icons"></i> Delete Logo</button>
+        <button class="btn-ash btn-admin" style="padding:6px 10px;font-size:11px;margin-bottom:6px;cursor:pointer" onclick="deleteAllImages('${p.id}')" title="Delete all images"><i class="fas fa-trash-alt"></i> Delete All Images</button>
+        <button class="btn-admin btn-ash" style="padding:6px 10px;font-size:11px;cursor:pointer;background:#c0392b;color:white" onclick="deleteProject('${p.id}')" title="Delete entire project"><i class="fas fa-trash"></i> DELETE PROJECT</button>
       </td>
     </tr>`}).join('');
 }
@@ -1016,73 +1035,105 @@ async function addProject(){
 }
 
 async function deleteProject(id){
-  if(!confirm('🗑️ Delete this project permanently? This cannot be undone.')) return;
+  console.log('🗑️ DELETE BUTTON CLICKED for project:', id);
+  
+  if(!confirm('🗑️ Delete this project permanently? This cannot be undone.')) {
+    console.log('❌ Delete cancelled by user');
+    return;
+  }
+  
+  console.log('✓ User confirmed deletion');
   
   const fb = getFirebase();
+  console.log('Firebase available?', !!fb);
+  
   let deleteSuccess = false;
   
   // Find the project to delete images
   const projToDelete = localProjects.find(p => p.id === id);
   if(projToDelete){
-    console.log('Deleting project:', projToDelete.title);
+    console.log('📋 Found project to delete:', projToDelete.title);
+  } else {
+    console.warn('⚠️ Project not found in localProjects');
   }
   
   // First, delete all images from storage
   if(fb && projToDelete){
     try{
-      console.log('🗑️ Deleting images from storage for project:', id);
+      console.log('🗑️ Step 1: Deleting images from Firebase Storage...');
       const folderRef = fb.storageRef(fb.storage, `projects/${id}`);
       const fileList = await fb.listAll(folderRef);
+      console.log(`  Found ${fileList.items.length} images in storage`);
+      
       for(let file of fileList.items){
         await fb.deleteObject(file);
-        console.log('✓ Deleted image:', file.name);
+        console.log(`  ✓ Deleted: ${file.name}`);
       }
-      console.log('✓ All images deleted');
+      console.log('✓ All storage images deleted');
     } catch(e){
-      console.warn('Could not delete images:', e.message);
+      console.warn('⚠️ Warning: Could not delete storage images:', e.message);
+      // Don't return - continue to delete from Firestore
     }
   }
   
   // Then delete document from Firestore
   if(fb){
     try{ 
-      console.log('🗑️ Deleting project from Firestore:', id);
+      console.log('🗑️ Step 2: Deleting project from Firestore...');
       await fb.deleteDoc(fb.doc(fb.db, 'projects', id));
       deleteSuccess = true;
-      console.log('✓ Project deleted from Firebase');
-      toast('🗑️ Project deleted permanently! ✅', 'ok');
+      console.log('✓ Project document deleted from Firestore');
     } catch(e){ 
-      console.error('❌ Firebase delete error:', e.message);
+      console.error('❌ FIRESTORE DELETE ERROR:', e.message);
       alert('❌ Failed to delete from Firebase:\n' + e.message);
-      return;
+      return; // Stop here if Firebase delete fails
     }
   } else {
-    console.warn('⚠️ Firebase not available - deleting locally only');
+    console.warn('⚠️ Firebase not available - will delete locally only');
     deleteSuccess = true;
   }
   
   // Remove from local state immediately
+  console.log('🗑️ Step 3: Removing from local state...');
   const beforeCount = localProjects.length;
   localProjects = localProjects.filter(p => p.id !== id);
   const afterCount = localProjects.length;
-  console.log(`✓ Removed from local state: ${beforeCount} → ${afterCount} projects`);
+  console.log(`✓ Removed from local: ${beforeCount} → ${afterCount} projects`);
+  
+  if(afterCount === beforeCount){
+    console.error('❌ ERROR: Project was not removed from localProjects!');
+  }
   
   // Refresh UI immediately
+  console.log('🔄 Refreshing UI...');
   loadProjectsToSite();
   loadProjectsTable();
   loadDashboardStats();
   
+  console.log('✅ Local UI updated');
+  toast('🗑️ Project deleted! ✅', 'ok');
+  
   // Reload from Firebase to confirm deletion and prevent resurrection
   if(deleteSuccess && fb){
-    console.log('🔄 Reloading from Firebase to verify deletion...');
+    console.log('🔄 Step 4: Reloading from Firebase to verify deletion...');
     setTimeout(async () => {
       try{
         await loadProjectsFromFirebase();
-        console.log('✓ Verified: Current project count =', localProjects.length);
+        console.log('✅ VERIFICATION COMPLETE: Current project count =', localProjects.length);
+        
+        const stillExists = localProjects.find(p => p.id === id);
+        if(stillExists){
+          console.error('❌ CRITICAL ERROR: Deleted project still exists after reload!');
+          alert('⚠️ Warning: Project may not have been deleted properly');
+        } else {
+          console.log('✅ CONFIRMED: Project deleted permanently');
+        }
       } catch(e) { 
         console.error('❌ Failed to reload after delete:', e.message);
       }
     }, 1000);
+  } else {
+    console.log('✅ Deletion complete (no Firebase reload)');
   }
 }
 
