@@ -4,6 +4,33 @@
    Firebase initialized from HTML module script
 ═══════════════════════════════════════════════════════ */
 
+/* Debug helper - call from console: debugFirebase() */
+window.debugFirebase = function(){
+  console.log('=== FIREBASE DEBUG INFO ===');
+  console.log('window._fb exists?', !!window._fb);
+  console.log('window._fbReady?', !!window._fbReady);
+  console.log('window._fbError?', window._fbError || 'None');
+  if(window._fb){
+    console.log('Firebase object:', window._fb);
+    console.log('  - db:', window._fb.db);
+    console.log('  - auth:', window._fb.auth);
+    console.log('  - storage:', window._fb.storage);
+  }
+  console.log('localProjects loaded?', localProjects.length > 0);
+  console.log('localProjects:', localProjects);
+  console.log('===========================');
+}
+
+/* Manual reload - call from console: reloadProjects() */
+window.reloadProjects = async function(){
+  console.log('🔄 Manually reloading projects from Firebase...');
+  await loadProjectsFromFirebase();
+  loadProjectsToSite();
+  loadProjectsTable();
+  loadDashboardStats();
+  console.log('✅ Reload complete!');
+}
+
 /* ─── ADMIN CREDENTIALS ─── */
 const ADMIN_USER = 'admin';
 let adminPassCurrent = 'jbventure2025';
@@ -227,7 +254,13 @@ async function deleteLogo(projectId){
 }
 
 /* ─── FIREBASE helper ─── */
-function getFirebase(){ return window._fb || null; }
+function getFirebase(){ 
+  if(window._fbError){
+    console.error('❌ Firebase initialization error:', window._fbError);
+    return null;
+  }
+  return window._fb || null; 
+}
 
 /* ─── TOAST ─── */
 function toast(msg, type='ok'){
@@ -287,8 +320,39 @@ window.addEventListener('scroll', () => {
 
 /* ─── PAGE LOAD ─── */
 window.addEventListener('load', () => {
+  console.log('🎯 Page load event fired');
+  
+  // CHECK IF ADMIN WAS PREVIOUSLY LOGGED IN
+  const wasAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+  console.log('Was admin logged in before?', wasAdminLoggedIn);
+  
+  if(wasAdminLoggedIn){
+    console.log('🔓 Restoring admin login state...');
+    adminLoggedIn = true;
+    const signinPage = document.getElementById('signInPage');
+    if(signinPage){
+      signinPage.classList.add('hidden');
+      signinPage.classList.add('exit');
+      console.log('✓ Sign-in page hidden');
+    }
+  }
+  
+  // Check Firebase status
+  if(window._fbError){
+    console.error('❌ Firebase error on page load:', window._fbError);
+    alert('⚠️ Firebase Error:\n' + window._fbError);
+  } else if(window._fbReady){
+    console.log('✅ Firebase is ready');
+  } else if(window._fb){
+    console.log('✓ Firebase object exists');
+    window._fbReady = true;
+  } else {
+    console.warn('⚠️ Firebase not yet available, waiting...');
+  }
+  
   runAnim();
   loadProjectsToSite();
+  
   // Trigger counter check in case stats are already visible
   setTimeout(triggerCounters, 800);
 
@@ -296,27 +360,40 @@ window.addEventListener('load', () => {
   const overlay = document.getElementById('authOverlay');
   if(overlay) overlay.addEventListener('click', e => { if(e.target === e.currentTarget) closeLogin(); });
 
-  // Firebase auth listener
-  const fb = getFirebase();
-  if(fb){
-    fb.onAuthStateChanged(fb.auth, user => {
-      if(user){
-        currentUser = user;
-        updateNavUser(user);
-        saveUserToFirestore(user);
-        // If sign-in page still showing, skip it
-        const sp = document.getElementById('signInPage');
-        if(sp && !sp.classList.contains('hidden')){
-          sp.classList.add('exit');
-          setTimeout(()=> sp.classList.add('hidden'), 520);
+  // Firebase auth listener — wait for Firebase to be ready
+  setTimeout(() => {
+    const fb = getFirebase();
+    if(fb){
+      console.log('🔐 Setting up Firebase auth listener...');
+      fb.onAuthStateChanged(fb.auth, user => {
+        if(user){
+          currentUser = user;
+          updateNavUser(user);
+          saveUserToFirestore(user);
+          console.log('👤 User logged in:', user.email);
+          // If sign-in page still showing, skip it
+          const sp = document.getElementById('signInPage');
+          if(sp && !sp.classList.contains('hidden')){
+            console.log('🔒 Hiding sign-in page (user authenticated)');
+            sp.classList.add('exit');
+            setTimeout(()=> sp.classList.add('hidden'), 520);
+          }
+        } else {
+          currentUser = null;
+          updateNavUser(null);
+          console.log('👤 User logged out');
+          // Clear admin login state if user logs out
+          localStorage.removeItem('adminLoggedIn');
+          localStorage.removeItem('adminLoginTime');
         }
-      } else {
-        currentUser = null;
-        updateNavUser(null);
-      }
-    });
-    loadProjectsFromFirebase();
-  }
+      });
+      
+      console.log('📥 Loading projects from Firebase on page load...');
+      loadProjectsFromFirebase().catch(e => console.error('Failed to load on page load:', e));
+    } else {
+      console.warn('⚠️ Firebase still not available after page load');
+    }
+  }, 500);
 });
 
 /* ─── NAV USER DISPLAY ─── */
@@ -749,10 +826,24 @@ function adminLogin(){
     console.log('✓ Admin login successful');
     if(err) err.style.display = 'none';
     adminLoggedIn = true;
+    
+    // Save admin login state to localStorage
+    localStorage.setItem('adminLoggedIn', 'true');
+    localStorage.setItem('adminLoginTime', new Date().getTime());
+    console.log('💾 Saved admin login state to localStorage');
+    
     const ls = document.getElementById('adminLoginScreen');
     const db = document.getElementById('adminDashboard');
     if(ls) ls.style.display = 'none';
     if(db){ db.style.display=''; db.classList.add('shown'); }
+    
+    // Hide sign-in page
+    const signinPage = document.getElementById('signInPage');
+    if(signinPage){
+      signinPage.classList.add('hidden');
+      signinPage.classList.add('exit');
+      console.log('🔒 Sign-in page hidden');
+    }
     
     // Load projects from Firebase FIRST, then refresh all panels
     console.log('📥 Loading projects from Firebase...');
@@ -801,15 +892,25 @@ function adminLogin(){
 }
 
 function adminLogout(){
+  console.log('👋 Admin logout clicked');
   adminLoggedIn = false;
+  
+  // Clear admin login state from localStorage
+  localStorage.removeItem('adminLoggedIn');
+  localStorage.removeItem('adminLoginTime');
+  console.log('💾 Cleared admin login state from localStorage');
+  
   const ls = document.getElementById('adminLoginScreen');
   const db = document.getElementById('adminDashboard');
   const au = document.getElementById('adminUser');
   const ap = document.getElementById('adminPass');
+  
   if(db){ db.style.display='none'; db.classList.remove('shown'); }
   if(ls) ls.style.display = 'flex';
   if(au) au.value = '';
   if(ap) ap.value = '';
+  
+  console.log('✓ Admin panel closed, login screen shown');
   // Note: Keep localStorage.adminCurrentPanel so user returns to same panel on re-login
 }
 
@@ -846,25 +947,54 @@ function changePassword(){
 
 async function loadProjectsFromFirebase(){
   const fb = getFirebase();
-  if(!fb){ console.warn('Firebase not available'); return; }
+  console.log('📥 loadProjectsFromFirebase() called');
+  console.log('Firebase available?', !!fb);
+  console.log('Firebase object:', fb);
+  
+  if(!fb){ 
+    console.warn('⚠️ Firebase not initialized yet');
+    // Wait a bit for Firebase to load
+    if(!window._fbReady){
+      console.log('⏳ Waiting for Firebase to initialize...');
+      await new Promise(r => setTimeout(r, 2000));
+      const fbRetry = getFirebase();
+      if(!fbRetry){
+        console.error('❌ Firebase still not available after waiting');
+        return;
+      }
+    }
+    return; 
+  }
+  
   try{
+    console.log('🔍 Querying Firestore collection: projects');
     const snap = await fb.getDocs(fb.collection(fb.db,'projects'));
+    console.log('Response received, empty?', snap.empty);
+    
     if(!snap.empty){
+      console.log(`✓ Found ${snap.docs.length} projects in Firestore`);
       localProjects = snap.docs.map(d => {
         const data = d.data();
+        console.log(`  📋 Project: ${data.title} (ID: ${d.id})`);
         // normalize: if imageUrls exists and img missing, use first image as img for thumbnail/backdrop
         if(!data.img && Array.isArray(data.imageUrls) && data.imageUrls.length){
           data.img = data.imageUrls[0];
         }
         return {id: d.id, ...data};
       });
-      console.log('Loaded', localProjects.length, 'projects from Firebase');
-      localProjects.forEach((p,i) => console.log(`Project ${i}:`, p.title, '| has image:', !!(p.img && p.img.trim())));
+      console.log('✅ Loaded', localProjects.length, 'projects from Firebase');
+      localProjects.forEach((p,i) => console.log(`  [${i+1}] ${p.title} | ID: ${p.id} | Images: ${(p.imageUrls || []).length}`));
       loadProjectsToSite();
     } else {
-      console.log('No projects found in Firebase');
+      console.log('⚠️ No projects found in Firestore');
+      localProjects = [];
+      loadProjectsToSite();
     }
-  } catch(e){ console.warn('Firebase projects load error:', e.message); }
+  } catch(e){ 
+    console.error('❌ Firebase projects load ERROR:', e.message);
+    console.error('Error details:', e);
+    alert('⚠️ Could not load projects from Firebase:\n' + e.message);
+  }
 }
 
 function loadProjectsToSite(){
