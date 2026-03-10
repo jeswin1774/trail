@@ -34,8 +34,21 @@ function openAddImages(projectId){
 async function handleAddImages(input){
   const files = Array.from(input.files || []);
   if(!files.length) return;
+  
+  console.log(`📸 Processing ${files.length} image(s) for project ${currentAddProjectId}`);
+  
   const totalMB = files.reduce((s,f) => s + f.size, 0) / (1024*1024);
-  if(totalMB > 100){ toast('Total file size exceeds 100 MB. Please select smaller files.','warn'); input.value = ''; return; }
+  if(totalMB > 100){ 
+    toast('❌ Total exceeds 100 MB. Select smaller files.','warn'); 
+    input.value = ''; 
+    return; 
+  }
+  
+  if(files.length > 10){
+    toast('❌ Maximum 10 images per project. You selected ' + files.length, 'warn');
+    input.value = '';
+    return;
+  }
 
   // reuse compressor used for new uploads
   const readAndCompress = (file) => new Promise((resolve, reject) => {
@@ -61,44 +74,59 @@ async function handleAddImages(input){
   });
 
   try{
+    console.log(`⏳ Compressing ${files.length} images...`);
+    toast('⏳ Compressing images...', 'ok');
     const results = await Promise.all(files.map(f => readAndCompress(f)));
     const newData = results.map(r => r.data);
+    console.log(`✓ Compressed ${newData.length} images successfully`);
 
     const fb = getFirebase();
     if(fb && currentAddProjectId){
       try{
-        toast('Uploading images...', 'ok');
+        console.log(`📤 Uploading ${newData.length} images to Firebase Storage...`);
+        toast(`📤 Uploading ${newData.length} image(s)...`, 'ok');
         const uploadedUrls = await uploadDataUrlsToStorage(currentAddProjectId, newData);
+        console.log(`✓ Upload complete: ${uploadedUrls.length} URLs received`);
+        
+        // Get existing images
         const docRef = fb.doc(fb.db,'projects', currentAddProjectId);
         const snap = await fb.getDoc(docRef);
         const existing = (snap && snap.exists && snap.exists()) ? (snap.data().imageUrls || (snap.data().img ? [snap.data().img] : [])) : [];
+        console.log(`📌 Found ${existing.length} existing images, adding ${uploadedUrls.length} new`);
+        
+        // Merge images
         const merged = existing.concat(uploadedUrls);
         await fb.setDoc(docRef, { imageUrls: merged, img: merged[0] || '' }, { merge: true });
-        toast('Images uploaded to Firebase ✅');
+        console.log(`✓ Saved ${merged.length} total images to Firestore`);
+        toast(`✅ ${uploadedUrls.length} image(s) uploaded successfully!`, 'ok');
       } catch(e){
-        console.error('Error uploading images to storage:', e);
-        toast('❌ Failed to upload images: ' + e.message,'warn');
+        console.error('❌ Image upload error:', e.message);
+        toast('❌ Upload failed: ' + e.message, 'error');
         return;
       }
     } else {
-      // update localProjects (fallback)
+      // Fallback: update localProjects
+      console.log('⚠️ Firebase not available - saving locally');
       const proj = localProjects.find(p => p.id === currentAddProjectId);
       if(proj){
         proj.imageUrls = Array.isArray(proj.imageUrls) ? proj.imageUrls.concat(newData) : (proj.img ? [proj.img].concat(newData) : newData.slice());
         if(!proj.img && proj.imageUrls && proj.imageUrls.length) proj.img = proj.imageUrls[0];
-        toast('Images added locally (no Firebase) ⚠️');
+        console.log(`✓ Added ${newData.length} images locally`);
+        toast(`✅ ${newData.length} image(s) added locally`, 'ok');
       }
     }
 
-    // refresh UI
-    setTimeout(() => {
-      loadProjectsFromFirebase().catch(e => console.warn('Reload after add images failed:', e));
-    }, 500);
+    // Refresh UI
+    console.log('🔄 Refreshing project views...');
     loadProjectsTable();
     loadProjectsToSite();
+    setTimeout(() => {
+      loadProjectsFromFirebase().catch(e => console.warn('Reload failed:', e));
+    }, 600);
+    
   } catch(err){
-    console.error('Image processing error:', err);
-    toast('❌ Failed to process images: ' + err.message,'warn');
+    console.error('❌ Image processing error:', err.message);
+    toast('❌ Processing error: ' + err.message, 'error');
   } finally {
     input.value = '';
     currentAddProjectId = null;
@@ -109,68 +137,92 @@ async function handleAddImages(input){
 async function uploadDataUrlsToStorage(projectId, dataUrls){
   const fb = getFirebase();
   if(!fb) throw new Error('Firebase not initialised');
+  
+  console.log(`📷 Uploading ${dataUrls.length} images to Firebase Storage (projectId: ${projectId})`);
   const urls = [];
-  for(let i=0;i<dataUrls.length;i++){
+  
+  for(let i = 0; i < dataUrls.length; i++){
     const data = dataUrls[i];
-    const fname = `${Date.now()}-${i}.jpg`;
+    const fname = `img-${Date.now()}-${i}.jpg`;
     const ref = fb.storageRef(fb.storage, `projects/${projectId}/${fname}`);
+    
     try{
+      console.log(`  [${i+1}/${dataUrls.length}] Uploading ${fname}...`);
       await fb.uploadString(ref, data, 'data_url');
       const dUrl = await fb.getDownloadURL(ref);
       urls.push(dUrl);
+      console.log(`  ✓ [${i+1}/${dataUrls.length}] Upload complete`);
     } catch(e){
-      console.error('Upload failed for', fname, e);
+      console.error(`  ❌ Failed to upload image ${i}: ${e.message}`);
+      throw new Error(`Image ${i+1} upload failed: ${e.message}`);
     }
   }
+  
+  console.log(`✓ All ${urls.length} images uploaded successfully`);
   return urls;
 }
 
 /* Delete all images stored under projects/{projectId} in Firebase Storage */
 async function deleteAllImages(projectId){
-  if(!confirm('Delete ALL images for this project from Firebase Storage?')) return;
+  if(!confirm('🗑️ Delete ALL images for this project? This cannot be undone.')) return;
   const fb = getFirebase();
-  if(!fb){ toast('Firebase not configured','warn'); return; }
+  if(!fb){ toast('⚠️ Firebase not configured','warn'); return; }
+  
   try{
-    toast('Deleting all images...', 'ok');
+    console.log(`🗑️ Deleting all images for project: ${projectId}`);
+    toast('🗑️ Deleting all images...', 'ok');
+    
     const listRef = fb.storageRef(fb.storage, `projects/${projectId}`);
     const res = await fb.listAll(listRef);
-    const deletes = res.items.map(itemRef => fb.deleteObject(itemRef).catch(e => console.warn('delete failed', e)));
+    console.log(`Found ${res.items.length} images to delete`);
+    
+    const deletes = res.items.map(itemRef => {
+      console.log(`  Deleting: ${itemRef.name}`);
+      return fb.deleteObject(itemRef);
+    });
     await Promise.all(deletes);
-    // clear imageUrls from Firestore
+    console.log(`✓ Deleted all ${res.items.length} images from storage`);
+    
+    // Clear imageUrls from Firestore
     const docRef = fb.doc(fb.db,'projects',projectId);
     await fb.setDoc(docRef, { imageUrls: [], img: '' }, { merge: true });
-    toast('All images deleted for project ✅');
+    console.log(`✓ Cleared imageUrls from Firestore`);
+    toast('✅ All images deleted successfully!', 'ok');
     
     setTimeout(() => {
-      loadProjectsFromFirebase().catch(e => console.warn('Reload after delete all failed:', e));
-    }, 500);
+      loadProjectsFromFirebase().catch(e => console.warn('Reload failed:', e));
+    }, 600);
     loadProjectsTable();
     loadProjectsToSite();
   } catch(e){ 
-    console.error('Delete all images error:', e); 
-    toast('❌ Failed to delete images: ' + e.message,'warn'); 
+    console.error('❌ Delete all images error:', e.message); 
+    toast('❌ Failed to delete images: ' + e.message, 'error'); 
   }
 }
 
 /* Delete only the logo/main image (keep other images in imageUrls) */
 async function deleteLogo(projectId){
-  if(!confirm('Delete only the logo? (Other images will be preserved)')) return;
+  if(!confirm('🖼️ Delete only the logo? Other images will be preserved.')) return;
   const fb = getFirebase();
-  if(!fb){ toast('Firebase not configured','warn'); return; }
+  if(!fb){ toast('⚠️ Firebase not configured','warn'); return; }
+  
   try{
-    toast('Deleting logo...', 'ok');
+    console.log(`🗑️ Deleting logo for project: ${projectId}`);
+    toast('🗑️ Deleting logo...', 'ok');
+    
     const docRef = fb.doc(fb.db,'projects',projectId);
     await fb.setDoc(docRef, { img: '' }, { merge: true });
-    toast('Logo deleted. Project images preserved ✅');
+    console.log(`✓ Logo deleted from Firestore`);
+    toast('✅ Logo deleted. Other images preserved!', 'ok');
     
     setTimeout(() => {
-      loadProjectsFromFirebase().catch(e => console.warn('Reload after logo delete failed:', e));
-    }, 500);
+      loadProjectsFromFirebase().catch(e => console.warn('Reload failed:', e));
+    }, 600);
     loadProjectsTable();
     loadProjectsToSite();
   } catch(e){ 
-    console.error('Logo delete error:', e);
-    toast('❌ Failed to delete logo: ' + e.message,'warn'); 
+    console.error('❌ Logo delete error:', e.message);
+    toast('❌ Failed to delete logo: ' + e.message, 'error'); 
   }
 }
 
@@ -964,37 +1016,73 @@ async function addProject(){
 }
 
 async function deleteProject(id){
-  if(!confirm('Delete this project from the website?')) return;
+  if(!confirm('🗑️ Delete this project permanently? This cannot be undone.')) return;
+  
   const fb = getFirebase();
   let deleteSuccess = false;
   
+  // Find the project to delete images
+  const projToDelete = localProjects.find(p => p.id === id);
+  if(projToDelete){
+    console.log('Deleting project:', projToDelete.title);
+  }
+  
+  // First, delete all images from storage
+  if(fb && projToDelete){
+    try{
+      console.log('🗑️ Deleting images from storage for project:', id);
+      const folderRef = fb.storageRef(fb.storage, `projects/${id}`);
+      const fileList = await fb.listAll(folderRef);
+      for(let file of fileList.items){
+        await fb.deleteObject(file);
+        console.log('✓ Deleted image:', file.name);
+      }
+      console.log('✓ All images deleted');
+    } catch(e){
+      console.warn('Could not delete images:', e.message);
+    }
+  }
+  
+  // Then delete document from Firestore
   if(fb){
     try{ 
-      toast('Deleting project...', 'ok');
-      await fb.deleteDoc(fb.doc(fb.db,'projects',id));
+      console.log('🗑️ Deleting project from Firestore:', id);
+      await fb.deleteDoc(fb.doc(fb.db, 'projects', id));
       deleteSuccess = true;
-      toast('Project deleted from Firebase ✅');
+      console.log('✓ Project deleted from Firebase');
+      toast('🗑️ Project deleted permanently! ✅', 'ok');
     } catch(e){ 
-      console.warn('Firebase delete error:', e.message);
-      toast('❌ Failed to delete from Firebase: ' + e.message, 'warn');
+      console.error('❌ Firebase delete error:', e.message);
+      alert('❌ Failed to delete from Firebase:\n' + e.message);
       return;
     }
   } else {
-    console.warn('Firebase not configured - deleting locally only');
-    toast('⚠️ Firebase not configured - deleted from browser only', 'warn');
+    console.warn('⚠️ Firebase not available - deleting locally only');
     deleteSuccess = true;
   }
   
+  // Remove from local state immediately
+  const beforeCount = localProjects.length;
   localProjects = localProjects.filter(p => p.id !== id);
+  const afterCount = localProjects.length;
+  console.log(`✓ Removed from local state: ${beforeCount} → ${afterCount} projects`);
+  
+  // Refresh UI immediately
   loadProjectsToSite();
   loadProjectsTable();
   loadDashboardStats();
   
-  // Reload from Firebase to confirm deletion
+  // Reload from Firebase to confirm deletion and prevent resurrection
   if(deleteSuccess && fb){
-    setTimeout(() => {
-      loadProjectsFromFirebase().catch(e => console.warn('Reload after delete failed:', e));
-    }, 500);
+    console.log('🔄 Reloading from Firebase to verify deletion...');
+    setTimeout(async () => {
+      try{
+        await loadProjectsFromFirebase();
+        console.log('✓ Verified: Current project count =', localProjects.length);
+      } catch(e) { 
+        console.error('❌ Failed to reload after delete:', e.message);
+      }
+    }, 1000);
   }
 }
 
