@@ -1,33 +1,7 @@
 
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-  import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-  import { getStorage, ref as storageRef, uploadString, getDownloadURL, listAll, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
-    authDomain: "site-356cd.firebaseapp.com",
-    databaseURL: "https://site-356cd-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "site-356cd",
-    storageBucket: "site-356cd.appspot.com",
-    messagingSenderId: "1021929307309",
-    appId: "1:1021929307309:web:37aaa3be1120723d311a24",
-    measurementId: "G-DM0JYZK14X"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-
-  // expose globally
-  window._fb = { auth, db, storage, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp, getStorage, storageRef, uploadString, getDownloadURL, listAll, deleteObject };
-
-
-
 /* ═══════════════════════════════════════════════════════
    JB VENTURE — COMPLETE FIXED JS
-   All buttons verified & working
+   Firebase initialized from HTML module script
 ═══════════════════════════════════════════════════════ */
 
 /* ─── ADMIN CREDENTIALS ─── */
@@ -385,14 +359,34 @@ function updatePhoneBtn(){
   const val = phoneEl.value.replace(/\D/g,'');
   const tick = document.getElementById('signinPhoneTick');
   const badge = document.getElementById('step2Badge');
+  
   if(val.length >= 8){
-    if(tick) tick.style.display = 'block';
+    // Valid phone number
+    if(tick) {
+      tick.style.display = 'block';
+      tick.title = 'Phone number is valid';
+    }
     phoneEl.style.borderColor = 'rgba(46,213,115,.6)';
-    if(badge){ badge.style.background='var(--red)'; badge.style.color='white'; badge.style.border='none'; }
+    phoneEl.title = '✓ Phone number is valid - proceed to Google sign-in';
+    if(badge){ 
+      badge.style.background='var(--red)'; 
+      badge.style.color='white'; 
+      badge.style.border='none';
+      badge.innerHTML = '2';
+    }
   } else {
-    if(tick) tick.style.display = 'none';
+    // Invalid phone number
+    if(tick) {
+      tick.style.display = 'none';
+    }
     phoneEl.style.borderColor = '';
-    if(badge){ badge.style.background='var(--ash3)'; badge.style.color='rgba(255,255,255,.5)'; badge.style.border='1px solid rgba(192,57,43,0.3)'; }
+    phoneEl.title = 'Enter at least 8 digits';
+    if(badge){ 
+      badge.style.background='var(--ash3)'; 
+      badge.style.color='rgba(255,255,255,.5)'; 
+      badge.style.border='1px solid rgba(192,57,43,0.3)';
+      badge.innerHTML = '2';
+    }
   }
 }
 
@@ -405,19 +399,31 @@ async function signinWithGoogle(){
   // Validate phone first
   if(phone.length < 8){
     if(phoneEl){ phoneEl.focus(); phoneEl.style.borderColor = 'rgba(192,57,43,.8)'; }
-    showSigninError('⚠️ Please enter your phone number first (Step 1)');
+    showSigninError('⚠️ Please enter your phone number first (Step 1). Need at least 8 digits.');
     return;
   }
 
-  if(window.location.protocol === 'file:'){
-    showSigninError('⚠️ Open via a web server (http://), not file://');
+  // Allow file://, localhost, and http:// for development and production
+  const isLocalFile = window.location.protocol === 'file:';
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const isSecure = window.location.protocol === 'https:' || window.location.protocol === 'http:';
+
+  // For file:// protocol or localhost, show demo mode option
+  if(isLocalFile){
+    const useDemoMode = confirm('🧪 You\'re testing locally (file://).\n\nClick OK to continue in DEMO MODE (no Firebase)\nClick Cancel to configure Firebase for this domain.\n\nDemo Credentials: admin / jbventure2025');
+    if(!useDemoMode){
+      showSigninError('🔧 To use Firebase:\n1) Host on a web server (http/https)\n2) Configure your domain in Firebase Console → Auth → Authorized Domains');
+      return;
+    }
+    // Demo mode: allow sign-in without Firebase
+    showSigninSuccess('Demo User', phone);
     return;
   }
 
   const fb = getFirebase();
   if(!fb){
     // Demo mode — no Firebase configured, just proceed
-    showSigninSuccess('Guest', '');
+    showSigninSuccess('Guest User', phone);
     return;
   }
 
@@ -510,9 +516,6 @@ function showAuthError(msg){
 
 /* Google sign-in from the navbar modal */
 async function signInGoogle(){
-  const fb = getFirebase();
-  if(window.location.protocol === 'file:'){ showAuthError('⚠️ Open via Live Server (http://), not file://'); return; }
-
   const phoneInput = document.getElementById('loginPhone');
   const countrySelect = document.getElementById('loginCountry');
   const phone = phoneInput ? phoneInput.value.replace(/\D/g,'') : '';
@@ -525,7 +528,40 @@ async function signInGoogle(){
     return;
   }
 
-  if(!fb){ showAuthError('Firebase not initialised'); return; }
+  // Allow file://, localhost, and http:// for development
+  const isLocalFile = window.location.protocol === 'file:';
+  
+  // For file:// protocol, show demo mode option
+  if(isLocalFile){
+    const useDemoMode = confirm('You\'re testing locally (file://).\n\nClick OK to continue in DEMO MODE (no Firebase)\nClick Cancel to configure Firebase for this domain.');
+    if(!useDemoMode){
+      showAuthError('⚠️ To use Firebase: 1) Host on a web server (http/https)\n2) Configure your domain in Firebase Console → Auth → Authorized Domains');
+      return;
+    }
+    // Demo mode: allow sign-in without Firebase
+    const ls = document.getElementById('loginSuccess');
+    const sn = document.getElementById('successName');
+    const se = document.getElementById('successEmail');
+    if(ls) ls.style.display = 'block';
+    if(sn) sn.textContent = '✓ Welcome, Demo User!';
+    if(se) se.textContent = country + phone;
+    if(phoneInput && phoneInput.parentElement && phoneInput.parentElement.parentElement)
+      phoneInput.parentElement.parentElement.style.display = 'none';
+    const hint = document.getElementById('phoneHint'); if(hint) hint.innerHTML = '';
+    toast('Welcome to Demo Mode! 🎉');
+    setTimeout(() => closeLogin(), 2000);
+    return;
+  }
+
+  const fb = getFirebase();
+  if(!fb){ 
+    // Demo mode — no Firebase configured
+    showAuthError('Firebase not initialised. Continuing in demo mode...');
+    const ls = document.getElementById('loginSuccess');
+    if(ls) ls.style.display = 'block';
+    setTimeout(() => closeLogin(), 2000);
+    return;
+  }
 
   const btn = document.getElementById('googleSignInBtn');
   const btnText = document.getElementById('googleBtnText');
@@ -576,9 +612,25 @@ async function signInGoogle(){
 
 function showAdminPortal(e){
   if(e && e.preventDefault) e.preventDefault();
+  
+  console.log('Admin Portal button clicked');
+  
   const portal = document.getElementById('adminPortal');
-  if(!portal) return;
+  if(!portal){ 
+    console.error('❌ Admin portal element not found');
+    alert('⚠️ Admin portal not found. Please refresh the page.');
+    return; 
+  }
+  
+  console.log('Admin portal element found, showing portal');
   portal.classList.add('on');
+  
+  // Show toast if available
+  const toastEl = document.getElementById('toast');
+  if(toastEl) {
+    toast('✅ Admin Portal opened', 'ok');
+  }
+  
   if(!adminLoggedIn){
     const ls = document.getElementById('adminLoginScreen');
     const db = document.getElementById('adminDashboard');
@@ -590,26 +642,59 @@ function showAdminPortal(e){
     if(au) au.value = '';
     if(ap) ap.value = '';
     if(err) err.style.display = 'none';
+    if(au) au.focus();
+    console.log('✓ Admin login screen shown');
   } else {
     // Already logged in — show dashboard directly
     const ls = document.getElementById('adminLoginScreen');
     const db = document.getElementById('adminDashboard');
     if(ls) ls.style.display = 'none';
     if(db){ db.style.display=''; db.classList.add('shown'); }
+    console.log('✓ Admin dashboard shown');
   }
 }
 
 function hideAdminPortal(){
   const portal = document.getElementById('adminPortal');
-  if(portal) portal.classList.remove('on');
+  if(portal) {
+    portal.classList.remove('on');
+    console.log('✓ Admin Portal closed');
+    const toastEl = document.getElementById('toast');
+    if(toastEl) {
+      toast('✅ Admin Portal closed', 'ok');
+    }
+  }
 }
 
 function adminLogin(){
   const u = document.getElementById('adminUser');
   const p = document.getElementById('adminPass');
   const err = document.getElementById('adminError');
-  if(!u || !p) return;
+  
+  console.log('Admin login attempt');
+  
+  if(!u || !p) {
+    console.error('Form elements not found');
+    alert('⚠️ Form elements not found');
+    return;
+  }
+  
+  if(!u.value.trim()){
+    if(err) err.style.display = 'block';
+    u.focus();
+    console.log('⚠️ Username empty');
+    return;
+  }
+  
+  if(!p.value){
+    if(err) err.style.display = 'block';
+    p.focus();
+    console.log('⚠️ Password empty');
+    return;
+  }
+  
   if(u.value.trim() === ADMIN_USER && p.value === adminPassCurrent){
+    console.log('✓ Admin login successful');
     if(err) err.style.display = 'none';
     adminLoggedIn = true;
     const ls = document.getElementById('adminLoginScreen');
@@ -620,6 +705,12 @@ function adminLogin(){
     loadProjectsTable();
     loadUsers();
     loadMessages();
+    
+    const toastEl = document.getElementById('toast');
+    if(toastEl) {
+      toast('✅ Login successful!', 'ok');
+    }
+    
     // Restore last active panel from localStorage
     setTimeout(() => {
       const lastPanel = localStorage.getItem('adminCurrentPanel') || 'dashboard';
@@ -639,7 +730,11 @@ function adminLogin(){
       });
     }, 100);
   } else {
-    if(err) err.style.display = 'block';
+    console.log('❌ Invalid credentials');
+    if(err) {
+      err.innerHTML = '❌ Invalid username or password. Try: admin / jbventure2025';
+      err.style.display = 'block';
+    }
     p.value = '';
     p.focus();
   }
