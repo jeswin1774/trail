@@ -1164,106 +1164,61 @@ async function addProject(){
   }
 }
 
-async function deleteProject(id){
-  console.log('🗑️ DELETE BUTTON CLICKED for project:', id);
+async function deleteProject(id) {
+  console.log('🗑️ DELETE PROJECT CALLED - ID:', id);
   
-  if(!confirm('🗑️ Delete this project permanently? This cannot be undone.')) {
-    console.log('❌ Delete cancelled by user');
+  const project = localProjects.find(p => p.id === id);
+  if (!project) {
+    toast('❌ Project not found', 'error');
     return;
   }
   
-  console.log('✓ User confirmed deletion');
-  
-  const fb = getFirebase();
-  console.log('Firebase available?', !!fb);
-  
-  let deleteSuccess = false;
-  
-  // Find the project to delete images
-  const projToDelete = localProjects.find(p => p.id === id);
-  if(projToDelete){
-    console.log('📋 Found project to delete:', projToDelete.title);
-  } else {
-    console.warn('⚠️ Project not found in localProjects');
+  if (!confirm(`⚠️ DELETE: "${project.title}"\n\nPermanently delete this project and all images?\n\nClick OK to confirm.`)) {
+    return;
   }
   
-  // First, delete all images from storage
-  if(fb && projToDelete){
-    try{
-      console.log('🗑️ Step 1: Deleting images from Firebase Storage...');
-      const folderRef = fb.storageRef(fb.storage, `projects/${id}`);
-      const fileList = await fb.listAll(folderRef);
-      console.log(`  Found ${fileList.items.length} images in storage`);
-      
-      for(let file of fileList.items){
-        await fb.deleteObject(file);
-        console.log(`  ✓ Deleted: ${file.name}`);
-      }
-      console.log('✓ All storage images deleted');
-    } catch(e){
-      console.warn('⚠️ Warning: Could not delete storage images:', e.message);
-      // Don't return - continue to delete from Firestore
-    }
-  }
+  console.log('✓ User confirmed');
+  toast('🗑️ Deleting...', 'ok');
   
-  // Then delete document from Firestore
-  if(fb){
-    try{ 
-      console.log('🗑️ Step 2: Deleting project from Firestore...');
-      await fb.deleteDoc(fb.doc(fb.db, 'projects', id));
-      deleteSuccess = true;
-      console.log('✓ Project document deleted from Firestore');
-    } catch(e){ 
-      console.error('❌ FIRESTORE DELETE ERROR:', e.message);
-      alert('❌ Failed to delete from Firebase:\n' + e.message);
-      return; // Stop here if Firebase delete fails
-    }
-  } else {
-    console.warn('⚠️ Firebase not available - will delete locally only');
-    deleteSuccess = true;
-  }
-  
-  // Remove from local state immediately
-  console.log('🗑️ Step 3: Removing from local state...');
-  const beforeCount = localProjects.length;
-  localProjects = localProjects.filter(p => p.id !== id);
-  const afterCount = localProjects.length;
-  console.log(`✓ Removed from local: ${beforeCount} → ${afterCount} projects`);
-  
-  if(afterCount === beforeCount){
-    console.error('❌ ERROR: Project was not removed from localProjects!');
-  }
-  
-  // Refresh UI immediately
-  console.log('🔄 Refreshing UI...');
-  loadProjectsToSite();
-  loadProjectsTable();
-  loadDashboardStats();
-  
-  console.log('✅ Local UI updated');
-  toast('🗑️ Project deleted! ✅', 'ok');
-  
-  // Reload from Firebase to confirm deletion and prevent resurrection
-  if(deleteSuccess && fb){
-    console.log('🔄 Step 4: Reloading from Firebase to verify deletion...');
-    setTimeout(async () => {
-      try{
-        await loadProjectsFromFirebase();
-        console.log('✅ VERIFICATION COMPLETE: Current project count =', localProjects.length);
-        
-        const stillExists = localProjects.find(p => p.id === id);
-        if(stillExists){
-          console.error('❌ CRITICAL ERROR: Deleted project still exists after reload!');
-          alert('⚠️ Warning: Project may not have been deleted properly');
-        } else {
-          console.log('✅ CONFIRMED: Project deleted permanently');
+  try {
+    const fb = getFirebase();
+    
+    if (fb) {
+      try {
+        console.log('📁 Deleting images from Storage...');
+        const folderRef = fb.storageRef(fb.storage, `projects/${id}`);
+        const fileList = await fb.listAll(folderRef);
+        for (const item of fileList.items) {
+          await fb.deleteObject(item);
         }
-      } catch(e) { 
-        console.error('❌ Failed to reload after delete:', e.message);
+        console.log('✓ Storage cleaned');
+      } catch (err) {
+        console.warn('⚠️ Storage error:', err.message);
       }
-    }, 1000);
-  } else {
-    console.log('✅ Deletion complete (no Firebase reload)');
+      
+      try {
+        console.log('📄 Deleting from Firestore...');
+        await fb.deleteDoc(fb.doc(fb.db, 'projects', id));
+        console.log('✓ Firestore deleted');
+      } catch (err) {
+        console.error('❌ Firestore error:', err.message);
+      }
+    }
+    
+    console.log('📝 Removing from local storage...');
+    localProjects = localProjects.filter(p => p.id !== id);
+    console.log('✓ Local updated. Count:', localProjects.length);
+    
+    loadProjectsToSite();
+    loadProjectsTable();
+    loadDashboardStats();
+    
+    console.log('✅ DELETE COMPLETE');
+    toast('✅ Project deleted!', 'ok');
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    toast('❌ Delete failed: ' + error.message, 'error');
   }
 }
 
