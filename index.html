@@ -17,24 +17,40 @@
   import { getStorage, ref as storageRef, uploadString, getDownloadURL, listAll, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
   const firebaseConfig = {
-    apiKey: "AIzaSyApKcWUd9aqDrpVIm1oq3wzAsNP-8xKaD8",
-    authDomain: "site-356cd.firebaseapp.com",
-    databaseURL: "https://site-356cd-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "site-356cd",
-    storageBucket: "site-356cd.appspot.com",
-    messagingSenderId: "1021929307309",
-    appId: "1:1021929307309:web:37aaa3be1120723d311a24",
-    measurementId: "G-DM0JYZK14X"
+    apiKey: "AIzaSyAYgNFchZ2mCX2NJGgYjIr8WuPv594JDCE",
+    authDomain: "constrution-8b877.firebaseapp.com",
+    projectId: "constrution-8b877",
+    storageBucket: "constrution-8b877.firebasestorage.app",
+    messagingSenderId: "716349579448",
+    appId: "1:716349579448:web:0e4bd6e7c717d1f52fd44d",
+    measurementId: "G-E05797FRYL"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+  try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
-  // expose globally for access from script.js
-  window._fb = { auth, db, storage, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp, getStorage, storageRef, uploadString, getDownloadURL, listAll, deleteObject };
-  console.log('✓ Firebase SDK initialized successfully');
+    // expose globally for access from script.js
+    window._fb = { 
+      auth, db, storage, 
+      GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, 
+      collection, doc, setDoc, getDoc, getDocs, addDoc, deleteDoc, serverTimestamp, 
+      getStorage, storageRef, uploadString, getDownloadURL, listAll, deleteObject 
+    };
+    
+    // Mark as ready
+    window._fbReady = true;
+    
+    console.log('✅ Firebase SDK initialized successfully');
+    console.log('DB reference:', db);
+    console.log('Auth reference:', auth);
+    console.log('Storage reference:', storage);
+  } catch(err) {
+    console.error('❌ Firebase initialization ERROR:', err);
+    window._fbError = err.message;
+  }
 </script>
 
     <link rel="stylesheet" href="style.css">
